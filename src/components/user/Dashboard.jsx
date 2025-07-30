@@ -27,10 +27,6 @@ const Dashboard = () => {
       <div className="row g-0">
         {/* Sidebar */}
         <div className={`col-lg-2 col-md-3 ${styles.sidebar}`}>
-          <div className={styles.logo}>
-            <span className={styles.logoIcon}>📚</span>
-            <span className={styles.logoText}>TuteDude</span>
-          </div>
           
           <nav className={styles.navigation}>
             <div className={`${styles.navItem} ${styles.active}`}>
