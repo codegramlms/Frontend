@@ -5,20 +5,21 @@ import LandingPage from "./components/Landing/LandingPage";
 import Dashboard from "./components/user/Dashboard";
 import LoginModal from "./components/Landing/LoginModal";
 import SignupModal from "./components/Landing/SignupModal";
+import Promotion from "./assets/Promotion";
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
   const token = sessionStorage.getItem("token");
 
   if (!token) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return children;
 };
 
 // List of pages that don't require authentication
-const PUBLIC_PAGES = ["/login", "/signup", "/"];
+const PUBLIC_PAGES = [ "/"];
 
 const App = () => {
   return <AppContent />;
@@ -89,7 +90,7 @@ const AppContent = () => {
           console.error("Error validating token:", error);
           sessionStorage.clear();
           setLoginStatus(false);
-          navigate("/login");
+          navigate("/");
         }
       }
     };
@@ -110,7 +111,7 @@ const AppContent = () => {
       setLoginStatus(hasToken);
 
       if (!hasToken) {
-        navigate("/login");
+        navigate("/");
       }
     };
 
@@ -126,12 +127,16 @@ const AppContent = () => {
       <NavbarWithRouter setLoginStatus={setLoginStatus} />
       <main>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<Promotion/>} />
           {/* <Route
             path="/login"
             element={<LoginModal setLoginStatus={setLoginStatus} />}
           />
           <Route path="/signup" element={<SignupModal />} /> */}
+
+          <Route
+            path="/landing" element={<LandingPage />}
+          />
 
           <Route
             path="/user-dashboard"
@@ -198,80 +203,80 @@ const NavbarWithRouter = ({ setLoginStatus }) => {
     navigate("/login");
   };
 
-  return (
-    <>
-      <header className={`${styles.header} sticky-top`}>
-        <div className="container-fluid">
-          <div className="row align-items-center py-2">
-            <div className="col-md-6">
-              <div
-                className={`${styles.logo} d-flex align-items-center`}
-                onClick={handleDashboardNavigate}
-                style={{ cursor: "pointer" }}
-              >
-                <span className={styles.logoIcon}>🎓</span>
-                <span className={styles.logoText}></span>
-              </div>
-            </div>
-            <div className="col-md-6">
-              <nav
-                className={`${styles.nav} d-flex justify-content-md-end justify-content-center gap-3 align-items-center`}
-              >
-                {userData ? (
-                  <>
-                    <div className={styles.userProfile}>
-                      <div className={styles.userAvatar}>
-                        <span className={styles.avatarText}>
-                          {userData.firstName?.[0] || ""}
-                          {userData.lastName?.[0] || ""}
-                        </span>
-                      </div>
-                      <div className={styles.userInfo}>
-                        <span className={styles.userName}>
-                          {userData.firstName} {userData.lastName || ""}
-                        </span>
-                      </div>
-                    </div>
-                    <button onClick={handleLogout} className={styles.logoutBtn}>
-                      <span>Logout</span>
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      className={`${styles.loginBtn} btn`}
-                      onClick={() => setShowLoginModal(true)}
-                    >
-                      Login
-                    </button>
-                    <button
-                      className={`${styles.signupBtn} btn`}
-                      onClick={() => setShowSignupModal(true)}
-                    >
-                      Sign Up
-                    </button>
-                  </>
-                )}
-              </nav>
-            </div>
-          </div>
-        </div>
-      </header>
+  // return (
+  //   <>
+  //     <header className={`${styles.header} sticky-top`}>
+  //       <div className="container-fluid">
+  //         <div className="row align-items-center py-2">
+  //           <div className="col-md-6">
+  //             <div
+  //               className={`${styles.logo} d-flex align-items-center`}
+  //               onClick={handleDashboardNavigate}
+  //               style={{ cursor: "pointer" }}
+  //             >
+  //               <span className={styles.logoIcon}>🎓</span>
+  //               <span className={styles.logoText}></span>
+  //             </div>
+  //           </div>
+  //           <div className="col-md-6">
+  //             <nav
+  //               className={`${styles.nav} d-flex justify-content-md-end justify-content-center gap-3 align-items-center`}
+  //             >
+  //               {userData ? (
+  //                 <>
+  //                   <div className={styles.userProfile}>
+  //                     <div className={styles.userAvatar}>
+  //                       <span className={styles.avatarText}>
+  //                         {userData.firstName?.[0] || ""}
+  //                         {userData.lastName?.[0] || ""}
+  //                       </span>
+  //                     </div>
+  //                     <div className={styles.userInfo}>
+  //                       <span className={styles.userName}>
+  //                         {userData.firstName} {userData.lastName || ""}
+  //                       </span>
+  //                     </div>
+  //                   </div>
+  //                   <button onClick={handleLogout} className={styles.logoutBtn}>
+  //                     <span>Logout</span>
+  //                   </button>
+  //                 </>
+  //               ) : (
+  //                 <>
+  //                   <button
+  //                     className={`${styles.loginBtn} btn`}
+  //                     onClick={() => setShowLoginModal(true)}
+  //                   >
+  //                     Login
+  //                   </button>
+  //                   <button
+  //                     className={`${styles.signupBtn} btn`}
+  //                     onClick={() => setShowSignupModal(true)}
+  //                   >
+  //                     Sign Up
+  //                   </button>
+  //                 </>
+  //               )}
+  //             </nav>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </header>
 
-      {/* Modals */}
-      <LoginModal
-        isOpen={showLoginModal}
-        onClose={closeModals}
-        onSwitchToSignup={handleSwitchToSignup}
-      />
+  //     {/* Modals */}
+  //     <LoginModal
+  //       isOpen={showLoginModal}
+  //       onClose={closeModals}
+  //       onSwitchToSignup={handleSwitchToSignup}
+  //     />
 
-      <SignupModal
-        isOpen={showSignupModal}
-        onClose={closeModals}
-        onSwitchToLogin={handleSwitchToLogin}
-      />
-    </>
-  );
+  //     <SignupModal
+  //       isOpen={showSignupModal}
+  //       onClose={closeModals}
+  //       onSwitchToLogin={handleSwitchToLogin}
+  //     />
+  //   </>
+  // );
 };
 
 export default App;
