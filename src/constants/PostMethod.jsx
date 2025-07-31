@@ -17,6 +17,7 @@ const getUserData = () => {
 // Generic POST API function with authentication
 export const postApiWithAuth = async (url, data, customHeaders = {}) => {
   try {
+    console.log("POST API URL:", url);
     const { user, token, role } = getUserData();
     
     const headers = {

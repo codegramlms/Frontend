@@ -49,7 +49,7 @@ export default function CodegramHomePage() {
     mainTitle: {
       fontSize: '3.5rem',
       fontWeight: '900',
-      background: 'linear-gradient(45deg, #2563eb, #4f46e5, #7c3aed)',
+      background: 'linear-gradient(45deg, #2563eb, #4f46e5)',
       WebkitBackgroundClip: 'text',
       WebkitTextFillColor: 'transparent',
       backgroundClip: 'text',
@@ -240,7 +240,7 @@ export default function CodegramHomePage() {
       gap: '30px'
     },
     testimonialCard: {
-      background: 'linear-gradient(45deg, #2563eb, #4f46e5)',
+      background: 'linear-gradient(45deg, #629bf7ff, #3b82f6)',
       borderRadius: '16px',
       padding: '30px',
       color: 'white',
@@ -300,7 +300,7 @@ export default function CodegramHomePage() {
     },
     enrollButton: {
       width: '100%',
-      background: 'linear-gradient(45deg, #2563eb, #4f46e5)',
+      background: 'linear-gradient(45deg, #629bf7ff, #3b82f6)',
       color: 'white',
       fontWeight: 'bold',
       padding: '12px 24px',
