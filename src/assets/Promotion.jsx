@@ -39,7 +39,6 @@ export default function CodegramHomePage() {
             {/* Refund Strip with 3D Folded Effect */}
             <div className={styles.refundStrip}>
               <span>Enjoy 100% Refund</span>
-              <div className={styles.refundStripFold}></div>
             </div>
             
             <div className={styles.hookDecoration}>🎯</div>
