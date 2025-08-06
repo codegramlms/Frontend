@@ -6,57 +6,59 @@
 }
 
 .refundStrip {
-  top: 68px;
-  left: -65px;
+  position: absolute;
+  top: 50px;
+  left: -50px;
   background: linear-gradient(135deg, #fbbf24, #f59e0b);
   color: #92400e;
-  padding: 8px 15px 8px 15px;
+  padding: 12px 60px 12px 20px;
   font-size: 0.875rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  z-index: 12; /* Higher z-index */
+  z-index: 12;
   box-shadow: 
     0 2px 8px rgba(251, 191, 36, 0.3),
     0 6px 20px rgba(0, 0, 0, 0.15),
     2px 2px 8px rgba(0, 0, 0, 0.1);
-  transform: rotate(-42deg);
-  transform-origin: top left;
+  transform: rotate(-45deg);
+  transform-origin: center;
   animation: slideDown 0.5s ease-out;
-  transform-style: preserve-3d;
-  width: 220px;
-  position: relative; /* Changed to relative for proper fold positioning */
+  white-space: nowrap;
+  width: auto;
+  min-width: 200px;
 }
 
- .refundStrip:before,
-  .refundStrip:after {
-    content: "";
-    position: absolute;
-    width: 5px;
-    height: 12px;
-    z-index: -100;
-    background-color: #f59e0b;
-  }
-  
-  .refundStrip:before {
-    bottom: -4px;
-    left: -4px;
-    transform: skewY(-35deg);
-  }
-  
-  .refundStrip:after {
-    bottom: -4px;
-    right: -4px;
-    transform: skewY(35deg);
-  }
-  
+.refundStrip:before {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 8px solid #d97706;
+  border-bottom: 8px solid transparent;
+}
+
+.refundStrip:after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-right: 8px solid #d97706;
+  border-bottom: 8px solid transparent;
+}
 
 @keyframes slideDown {
   0% {
-    transform: translateY(-100%) rotateX(-12deg) rotateY(5deg) skewY(-2deg);
+    transform: translateY(-100%) rotate(-45deg);
+    opacity: 0;
   }
   100% {
-    transform: translateY(0) rotateX(-12deg) rotateY(5deg) skewY(-2deg);
+    transform: translateY(0) rotate(-45deg);
+    opacity: 1;
   }
 }
 
@@ -136,8 +138,7 @@
   box-shadow: 0 25px 50px rgba(30, 41, 59, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
-  overflow: visible; /* Changed from hidden to visible */
-  perspective: 1000px; /* Added perspective for 3D effect */
+  overflow: visible;
 }
 
 .hookBadge {
@@ -584,31 +585,12 @@
   }
 
   .refundStrip {
+    top: 40px;
+    left: -40px;
     font-size: 0.75rem;
-    padding: 6px 35px 6px 12px;
-    transform: rotateX(-8deg) rotateY(3deg) skewY(-1deg);
-    clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 100%, 0 100%);
-  }
-
-  .refundStripFold {
-    width: 20px;
-    right: -18px;
-    transform: rotateY(-35deg) rotateX(8deg) translateX(-3px);
-  }
-
-  .refundStrip::after {
-    width: 20px;
-    right: -18px;
-    transform: rotateY(-35deg) rotateX(8deg) translateX(-3px);
-  }
-
-  @keyframes slideDown {
-    0% {
-      transform: translateY(-100%) rotateX(-8deg) rotateY(3deg) skewY(-1deg);
-    }
-    100% {
-      transform: translateY(0) rotateX(-8deg) rotateY(3deg) skewY(-1deg);
-    }
+    padding: 10px 50px 10px 15px;
+    min-width: 180px;
+    transform: rotate(-45deg);
   }
 
   .mainTitle {
@@ -676,31 +658,12 @@
 
 @media (max-width: 576px) {
   .refundStrip {
-    font-size: 0.625rem;
-    padding: 5px 30px 5px 10px;
-    transform: rotateX(-5deg) rotateY(2deg) skewY(-0.5deg);
-    clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 100%, 0 100%);
-  }
-
-  .refundStripFold {
-    width: 18px;
-    right: -15px;
-    transform: rotateY(-25deg) rotateX(5deg) translateX(-2px);
-  }
-
-  .refundStrip::after {
-    width: 18px;
-    right: -15px;
-    transform: rotateY(-25deg) rotateX(5deg) translateX(-2px);
-  }
-
-  @keyframes slideDown {
-    0% {
-      transform: translateY(-100%) rotateX(-5deg) rotateY(2deg) skewY(-0.5deg);
-    }
-    100% {
-      transform: translateY(0) rotateX(-5deg) rotateY(2deg) skewY(-0.5deg);
-    }
+    top: 35px;
+    left: -35px;
+    font-size: 0.65rem;
+    padding: 8px 40px 8px 12px;
+    min-width: 150px;
+    transform: rotate(-45deg);
   }
 
   .mainTitle {
@@ -729,5 +692,27 @@
 
   .tagContainer {
     justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .refundStrip {
+    top: 30px;
+    left: -30px;
+    font-size: 0.6rem;
+    padding: 6px 35px 6px 10px;
+    min-width: 130px;
+    transform: rotate(-45deg);
+  }
+}
+
+@media (max-width: 360px) {
+  .refundStrip {
+    top: 25px;
+    left: -25px;
+    font-size: 0.55rem;
+    padding: 5px 30px 5px 8px;
+    min-width: 120px;
+    transform: rotate(-45deg);
   }
 }
