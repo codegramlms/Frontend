@@ -33,19 +33,19 @@ const LandingPage = () => {
       title: 'Creative Designer Pack',
       courses: ['Photoshop', 'Illustrator', 'Figma', 'UI/UX', 'Branding', 'Portfolio'],
       duration: '4 months',
-      color: 'purple'
+      color: 'blue'
     },
     {
       title: 'Data Scientist Pack',
       courses: ['Python', 'SQL', 'Machine Learning', 'Tableau', 'Statistics', 'AI'],
       duration: '8 months',
-      color: 'green'
+      color: 'blue'
     },
     {
       title: 'Business Growth Pack',
       courses: ['Marketing', 'Analytics', 'SEO', 'Social Media', 'Strategy', 'Leadership'],
       duration: '5 months',
-      color: 'orange'
+      color: 'blue'
     }
   ];
 
@@ -117,35 +117,14 @@ const LandingPage = () => {
 
   return (
     <div className={styles.container}>
-      {/* Header
-      <header className={`${styles.header} sticky-top`}>
+      {/* Banner Section */}
+      <section className={styles.banner}>
         <div className="container-fluid">
-          <div className="row align-items-center py-2">
-            <div className="col-md-6">
-              <div className={`${styles.logo} d-flex align-items-center`}>
-                <span className={styles.logoIcon}>🎓</span>
-                <span className={styles.logoText}></span>
-              </div>
-            </div>
-            <div className="col-md-6">
-              <nav className={`${styles.nav} d-flex justify-content-md-end justify-content-center gap-3`}>
-                <button 
-                  className={`${styles.loginBtn} btn`}
-                  onClick={() => setShowLoginModal(true)}
-                >
-                  Login
-                </button>
-                <button 
-                  className={`${styles.signupBtn} btn`}
-                  onClick={() => setShowSignupModal(true)}
-                >
-                  Sign Up
-                </button>
-              </nav>
-            </div>
+          <div className="text-center py-3">
+            <p className={styles.bannerText}>Enjoy 100% Refund On Course Completion</p>
           </div>
         </div>
-      </header> */}
+      </section>
 
       {/* Hero Section */}
       <section className={styles.hero}>
@@ -154,38 +133,50 @@ const LandingPage = () => {
             <div className="col-lg-6 col-md-12 mb-4 mb-lg-0">
               <div className={styles.heroText}>
                 <h1 className={styles.heroTitle}>
-                  Master Your Tech Career With Expert Mentorship & Live Projects
+                   Master Your Tech Career
                 </h1>
-                <p className={styles.heroSubtitle}>
-                  Transform your career with industry-relevant courses, personalized mentorship, and guaranteed internship opportunities - all with 100% refund guarantee.
+                <h2 className={styles.heroSubtitle}>
+                  With Expert Mentorship & <br />
+                  <span className={styles.freeTag}>Live Projects</span>
+                </h2>
+                <p className={styles.heroDescription}>
+                  With 100% Refund guarantee on course completion.
                 </p>
-                <div className={`${styles.heroFeatures} d-flex flex-wrap gap-3 mb-4`}>
-                  <div className={styles.featureItem}>
-                    <span className={styles.featureIcon}>💰</span>
-                    <span>100% Refund</span>
-                  </div>
-                  <div className={styles.featureItem}>
-                    <span className={styles.featureIcon}>🎯</span>
-                    <span>Expert Mentorship</span>
-                  </div>
-                  <div className={styles.featureItem}>
-                    <span className={styles.featureIcon}>💼</span>
-                    <span>Internship Guaranteed</span>
-                  </div>
+                <div className={`${styles.rating} d-flex align-items-center gap-2 mb-4`}>
+                  <span className={styles.googleIcon}>G</span>
+                  <span className={styles.ratingText}>4.9/5</span>
+                  <div className={styles.stars}>⭐⭐⭐⭐⭐</div>
+                  <span className={styles.ratingSubtext}>Google Ratings</span>
                 </div>
-                <button className={`${styles.exploreCourses} btn btn-lg`}>Explore Courses</button>
+                <div className={`${styles.heroButtons} d-flex gap-3`}>
+                  <button className={`${styles.exploreCourses} btn btn-lg`}>Explore Courses</button>
+                </div>
               </div>
             </div>
             <div className="col-lg-6 col-md-12">
               <div className={styles.heroImage}>
-                <div className={`${styles.heroCard} text-center mb-4`}>
-                  <div className={styles.studentAvatar}>👨‍💻</div>
-                  <p className="mb-0">Join 50k+ Students</p>
-                </div>
-                <div className={`${styles.heroStats} text-center`}>
-                  <div className={styles.statItem}>
-                    <span className={styles.statNumber}>4.9/5</span>
-                    <span className={styles.statLabel}>★★★★★</span>
+                <div className={styles.heroVisual}>
+                  <div className={`${styles.featureCard} ${styles.refundCard}`}>
+                    <span className={styles.cardIcon}>📊</span>
+                    <span>100% Refund</span>
+                  </div>
+                  <div className={`${styles.featureCard} ${styles.supportCard}`}>
+                    <span className={styles.cardIcon}>💡</span>
+                    <span>Instant doubt Support</span>
+                  </div>
+                  <div className={styles.mainImage}>
+                    <div className={styles.studentAvatar}>👨‍💻</div>
+                  </div>
+                  <div className={styles.womanImage}>
+                    <div className={styles.womanAvatar}>👩‍💼</div>
+                  </div>
+                  <div className={`${styles.reviewCard}`}>
+                    <span className={styles.googleIcon}>G</span>
+                    <span>Google Reviews</span>
+                    <div className={styles.reviewRating}>
+                      <span>4.9/5</span>
+                      <div className={styles.reviewStars}>⭐⭐⭐⭐⭐</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -193,29 +184,29 @@ const LandingPage = () => {
           </div>
           
           {/* Stats Section */}
-          <div className="row g-4 py-5">
+          <div className={`${styles.statSection} row g-4 py-5`}>
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className={`${styles.statCard} text-center`}>
-                <span className={styles.statNumber}>50+</span>
+                <span className={styles.statNumber}>42+</span>
                 <span className={styles.statLabel}>Courses</span>
               </div>
             </div>
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className={`${styles.statCard} text-center`}>
-                <span className={styles.statNumber}>100k+</span>
+                <span className={styles.statNumber}>90K+</span>
                 <span className={styles.statLabel}>Learners</span>
               </div>
             </div>
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className={`${styles.statCard} text-center`}>
-                <span className={styles.statNumber}>95%</span>
-                <span className={styles.statLabel}>Success Rate</span>
+                <span className={styles.statNumber}>100K+</span>
+                <span className={styles.statLabel}>Doubts Solved</span>
               </div>
             </div>
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className={`${styles.statCard} text-center`}>
-                <span className={styles.statNumber}>15k+</span>
-                <span className={styles.statLabel}>Projects</span>
+                <span className={styles.statNumber}>10K+</span>
+                <span className={styles.statLabel}>Student Projects</span>
               </div>
             </div>
           </div>
@@ -323,7 +314,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Why Choose Us */}
+         {/* Why Choose Us */}
       <section className={`${styles.whyChooseSection} py-5`}>
         <div className="container">
           <h2 className={`${styles.sectionTitle} text-center mb-3`}>Why Choose TechMaster?</h2>
@@ -505,5 +496,3 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
-
- 

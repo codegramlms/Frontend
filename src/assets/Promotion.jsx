@@ -68,6 +68,101 @@ export default function CodegramHomePage() {
       margin: '20px auto',
       borderRadius: '2px'
     },
+    hookSection: {
+      background: 'linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%)',
+      borderRadius: '24px',
+      padding: '50px 40px',
+      textAlign: 'center',
+      marginBottom: '50px',
+      boxShadow: '0 25px 50px rgba(30, 41, 59, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+      border: '1px solid rgba(255, 255, 255, 0.1)',
+      position: 'relative',
+      overflow: 'hidden'
+    },
+    hookBadge: {
+      background: 'linear-gradient(45deg, #10b981, #059669)',
+      color: 'white',
+      padding: '10px 24px',
+      borderRadius: '50px',
+      fontSize: '0.875rem',
+      fontWeight: '700',
+      display: 'inline-block',
+      marginBottom: '25px',
+      border: '2px solid rgba(255, 255, 255, 0.2)',
+      textTransform: 'uppercase',
+      letterSpacing: '1px',
+      boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)'
+    },
+    hookTitle: {
+      fontSize: '2.8rem',
+      fontWeight: '800',
+      color: 'white',
+      marginBottom: '20px',
+      textShadow: '0 4px 8px rgba(0,0,0,0.3)',
+      letterSpacing: '-0.5px'
+    },
+    hookHighlight: {
+      background: 'linear-gradient(45deg, #3b82f6, #2563eb)',
+      padding: '8px 16px',
+      borderRadius: '12px',
+      border: '2px solid rgba(59, 130, 246, 0.3)',
+      boxShadow: '0 4px 15px rgba(59, 130, 246, 0.2)'
+    },
+    hookSubtitle: {
+      fontSize: '1.4rem',
+      color: '#e2e8f0',
+      fontWeight: '500',
+      marginBottom: '25px',
+      marginTop: '25px',
+      textShadow: '0 2px 4px rgba(0,0,0,0.2)'
+    },
+    hookDescription: {
+      fontSize: '1.1rem',
+      color: '#cbd5e1',
+      maxWidth: '650px',
+      margin: '0 auto 30px',
+      lineHeight: '1.7',
+      textShadow: '0 1px 2px rgba(0,0,0,0.1)'
+    },
+    hookFeatures: {
+      display: 'flex',
+      justifyContent: 'center',
+      gap: '40px',
+      marginTop: '30px',
+      flexWrap: 'wrap'
+    },
+    hookFeature: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      color: 'white'
+    },
+    hookFeatureIcon: {
+      width: '50px',
+      height: '50px',
+      borderRadius: '50%',
+      background: 'linear-gradient(45deg, #3b82f6, #1d4ed8)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: '10px',
+      fontSize: '20px',
+      boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)'
+    },
+    hookFeatureText: {
+      fontSize: '0.9rem',
+      fontWeight: '600',
+      textAlign: 'center',
+      opacity: '0.9'
+    },
+    hookDecoration: {
+      position: 'absolute',
+      top: '25px',
+      right: '30px',
+      fontSize: '2.5rem',
+      opacity: '0.15',
+      animation: 'float 3s ease-in-out infinite'
+    },
     heroSection: {
       textAlign: 'center',
       marginBottom: '50px'
@@ -300,15 +395,18 @@ export default function CodegramHomePage() {
     },
     enrollButton: {
       width: '100%',
-      background: 'linear-gradient(45deg, #629bf7ff, #3b82f6)',
+      background: 'linear-gradient(45deg, #16a34a, #15803d)',
       color: 'white',
       fontWeight: 'bold',
-      padding: '12px 24px',
+      padding: '15px 30px',
       borderRadius: '12px',
       border: 'none',
       cursor: 'pointer',
       transition: 'all 0.3s ease',
-      fontSize: '16px'
+      fontSize: '16px',
+      textDecoration: 'none',
+      display: 'inline-block',
+      textAlign: 'center'
     },
     footer: {
       textAlign: 'center',
@@ -332,15 +430,20 @@ export default function CodegramHomePage() {
   };
 
   const handleButtonHover = (e) => {
-    e.currentTarget.style.background = 'linear-gradient(45deg, #1d4ed8, #3730a3)';
+    e.currentTarget.style.background = 'linear-gradient(45deg, #15803d, #166534)';
     e.currentTarget.style.transform = 'translateY(-2px)';
-    e.currentTarget.style.boxShadow = '0 8px 25px rgba(37, 99, 235, 0.3)';
+    e.currentTarget.style.boxShadow = '0 8px 25px rgba(22, 163, 74, 0.3)';
   };
 
   const handleButtonLeave = (e) => {
-    e.currentTarget.style.background = 'linear-gradient(45deg, #2563eb, #4f46e5)';
+    e.currentTarget.style.background = 'linear-gradient(45deg, #16a34a, #15803d)';
     e.currentTarget.style.transform = 'translateY(0)';
     e.currentTarget.style.boxShadow = 'none';
+  };
+
+  const handleFormRedirect = () => {
+    // Replace this URL with your actual Google Form URL
+    window.open('https://forms.gle/jFBzvb2aCsDmswk58', '_blank');
   };
 
   return (
@@ -360,6 +463,32 @@ export default function CodegramHomePage() {
           <h1 style={styles.mainTitle}>CODEGRAM</h1>
           <p style={styles.subtitle}>Project-Oriented Corporate Training</p>
           <div style={styles.divider}></div>
+        </div>
+
+        {/* Hook Section */}
+        <div style={styles.hookSection}>
+          <div style={styles.hookDecoration}>🎯</div>
+          <div style={styles.hookBadge}>Self-paced IT courses </div>
+          <h2 style={styles.hookTitle}>
+            Invest <span style={styles.hookHighlight}>₹799</span> in Your Future
+          </h2>
+          <h3 style={styles.hookSubtitle}>
+            💥 Join the Waiting List Now
+          </h3>
+          <p style={styles.hookDescription}>
+Students who sign up early will get priority access and an exclusive discount when we launch as they will learn from industry experts, get a 100% refund on course completion, build real-world projects and crack top IT interviews
+          </p>
+          <h4 style={styles.hookSubtitle}> Don't miss your chance to be part of the Codegram Early Access Club.</h4>
+          <div style={styles.hookFeatures}>
+            <div style={styles.hookFeature}>
+              <div style={styles.hookFeatureIcon}>🎯</div>
+              <div style={styles.hookFeatureText}>Quality<br/>Assured</div>
+            </div>
+            <div style={styles.hookFeature}>
+              <div style={styles.hookFeatureIcon}>💼</div>
+              <div style={styles.hookFeatureText}>Career<br/>Focused</div>
+            </div>
+          </div>
         </div>
 
         {/* Hero Section */}
@@ -477,22 +606,13 @@ export default function CodegramHomePage() {
           {/* Contact Section */}
           <div style={styles.contactCard}>
             <h4 style={styles.contactTitle}>Ready to Start?</h4>
-            <div style={styles.contactInfo}>
-              <div style={styles.contactItem}>
-                <span style={{fontSize: '20px'}}>📞</span>
-                <span style={styles.contactText}>+91-XXXX-XXX-XXX</span>
-              </div>
-              <div style={styles.contactItem}>
-                <span style={{fontSize: '20px'}}>✉️</span>
-                <span style={styles.contactText}>info@codegram.com</span>
-              </div>
-            </div>
             <button 
               style={styles.enrollButton}
               onMouseEnter={handleButtonHover}
               onMouseLeave={handleButtonLeave}
+              onClick={handleFormRedirect}
             >
-              Coming Soon....
+              Join wait list 📝
             </button>
           </div>
         </div>
@@ -504,6 +624,14 @@ export default function CodegramHomePage() {
           </p>
         </div>
       </div>
+
+      {/* CSS Animation */}
+      <style jsx>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+      `}</style>
     </div>
   );
 }
