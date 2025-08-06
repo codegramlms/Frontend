@@ -93,12 +93,13 @@ export default function CodegramHomePage() {
                   <h3 className={styles.courseTitle}>Java Development</h3>
                 </div>
                 <p className={styles.courseText}>
-                  Master Core Java, OOPs, JDBC, Servlets, JSP, and Spring Boot. Build enterprise applications with hands-on projects.
+                  Master Core Java, OOPs, JDBC, Servlets, JSP, and Spring Framework. Build enterprise applications with hands-on projects.
                 </p>
                 <div className={styles.tagContainer}>
                   <span className={`${styles.tag} ${styles.tagOrange}`}>Core Java</span>
-                  <span className={`${styles.tag} ${styles.tagRed}`}>Spring Boot</span>
-                  <span className={`${styles.tag} ${styles.tagYellow}`}>JSP</span>
+                  <span className={`${styles.tag} ${styles.tagBlue}`}>Advance Java</span>
+                  <span className={`${styles.tag} ${styles.tagRed}`}>Java Framework</span>
+             
                 </div>
               </div>
 
@@ -108,7 +109,7 @@ export default function CodegramHomePage() {
                   <div className={`${styles.courseIcon} ${styles.reactIcon}`}>
                     <span>R</span>
                   </div>
-                  <h3 className={styles.courseTitle}>React Frontend</h3>
+                  <h3 className={styles.courseTitle}>React Redux Frontend</h3>
                 </div>
                 <p className={styles.courseText}>
                   Master modern frontend development with React.js. Learn components, Hooks, State Management, and API integration.
@@ -147,7 +148,7 @@ export default function CodegramHomePage() {
                   <div className={`${styles.featureIcon} ${styles.orangeIcon}`}>
                     <span>✓</span>
                   </div>
-                  <span className={styles.featureText}>Career Support</span>
+                  <span className={styles.featureText}>Interview Assistance</span>
                 </div>
               </div>
             </div>
