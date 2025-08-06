@@ -36,13 +36,19 @@ export default function CodegramHomePage() {
 
           {/* Hook Section */}
           <div className={styles.hookSection}>
+            {/* Refund Strip with 3D Folded Effect */}
+            <div className={styles.refundStrip}>
+              <span>Enjoy 100% Refund</span>
+              <div className={styles.refundStripFold}></div>
+            </div>
+            
             <div className={styles.hookDecoration}>🎯</div>
             <div className={styles.hookBadge}>Self-paced IT courses</div>
             <h2 className={styles.hookTitle}>
               Invest <span className={styles.hookHighlight}>₹799</span> for upskilling
             </h2>
             
-            <div className={styles.joinBtn}   onClick={handleFormRedirect}>  💥 Join the Waiting List Now</div>
+            <div className={styles.joinBtn} onClick={handleFormRedirect}>💥 Join the Waiting List Now</div>
 
             
             <p className={styles.hookDescription}>
