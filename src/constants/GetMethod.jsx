@@ -33,8 +33,7 @@ export const getApiWithAuth = async (url, params = {}, customHeaders = {}) => {
     if (user) {
       headers['X-User-Data'] = JSON.stringify(user);
       headers['X-User-Role'] = role || '';
-      headers['X-User-Email'] = user.email || '';
-      headers['X-User-Id'] = user.id || '';
+      headers['X-User-Email'] = user.emailId || '';
     }
 
     const response = await axios.get(url, {

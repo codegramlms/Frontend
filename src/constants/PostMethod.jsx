@@ -17,6 +17,7 @@ const getUserData = () => {
 // Generic POST API function with authentication
 export const postApiWithAuth = async (url, data, customHeaders = {}) => {
   try {
+    console.log("POST API URL:", url);
     const { user, token, role } = getUserData();
     
     const headers = {
@@ -33,8 +34,7 @@ export const postApiWithAuth = async (url, data, customHeaders = {}) => {
     if (user) {
       headers['X-User-Data'] = JSON.stringify(user);
       headers['X-User-Role'] = role || '';
-      headers['X-User-Email'] = user.email || '';
-      headers['X-User-Id'] = user.id || '';
+      headers['X-User-Email'] = user.emailId || '';
     }
 
     const response = await axios.post(url, data, { headers });

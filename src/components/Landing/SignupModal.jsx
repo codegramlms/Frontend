@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { postApiWithAuth } from '../../constants/PostMethod';
 import { REGISTER_URL } from '../../constants/apiConstants';
 import styles from './SignupModal.module.css';
@@ -17,11 +17,42 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
     mobileNo: ''
   });
 
+  // Reset form when modal is closed
+  const resetForm = () => {
+    setFormData({
+      fullName: '',
+      emailId: '',
+      password: '',
+      mobileNo: ''
+    });
+    setFormError({});
+    setSuccessMessage("");
+    setShowSuccessModal(false);
+    setLoadingSubmit(false);
+  };
+
+  // Handle modal close with form reset
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
+
+  // Auto-close modal after 3 seconds when success message is shown
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        handleClose();
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value  // Fixed: use name instead of e.target.name
+      [name]: value
     });
 
     validateField(name, value);
@@ -32,7 +63,7 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
 
     if (name === "emailId") {
       if (!validateEmail(value)) {
-        errorMessage = "Email must be in the format: example@yash.com";
+        errorMessage = "Email must be in the format: example@gmail.com";
       }
     } else if (name === "password") {
       if (!validatePassword(value)) {
@@ -55,7 +86,7 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
   };
 
   const validateEmail = (emailId) => {
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@yash\.com$/; // Fixed: escaped dot and added yash
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; 
     return emailPattern.test(emailId);
   };
 
@@ -104,10 +135,12 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
       // Prepare user data matching backend User model
       const userData = {
         fullName: formData.fullName,
-        email: formData.emailId, // Map emailId to email for backend
+        emailId: formData.emailId, // Map emailId to email for backend
         password: formData.password,
         mobileNo: formData.mobileNo
       };
+
+      console.log(REGISTER_URL)
 
       // Call the register API
       const response = await postApiWithAuth(REGISTER_URL, userData);
@@ -147,8 +180,8 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
 
   return (
     <div className={styles.overlay}>
-      <div className={styles.modal}>
-        <button className={styles.closeButton} onClick={onClose}>
+      <div className={`${styles.modal} ${Object.keys(formError).length > 0 ? styles.modalWithErrors : ''}`}>
+        <button className={styles.closeButton} onClick={handleClose}>
           ×
         </button>
         
@@ -178,11 +211,11 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
               placeholder="Full Name"
               value={formData.fullName}
               onChange={handleChange}
-              className={styles.input}
+              className={`${styles.input} ${formError.fullName ? styles.inputError : ''}`}
               required
             />
             {formError.fullName && (
-              <div className={styles.errorMessage}>{formError.fullName}</div>
+              <div className={styles.fieldErrorMessage}>{formError.fullName}</div>
             )}
           </div>
 
@@ -192,13 +225,13 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
               type="email"
               name="emailId"
               placeholder="Email"
-              value={formData.emailId} // Fixed: use emailId instead of email
+              value={formData.emailId}
               onChange={handleChange}
-              className={styles.input}
+              className={`${styles.input} ${formError.emailId ? styles.inputError : ''}`}
               required
             />
             {formError.emailId && (
-              <div className={styles.errorMessage}>{formError.emailId}</div>
+              <div className={styles.fieldErrorMessage}>{formError.emailId}</div>
             )}
           </div>
 
@@ -210,12 +243,12 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
               placeholder="Password"
               value={formData.password}
               onChange={handleChange}
-              className={styles.input}
+              className={`${styles.input} ${formError.password ? styles.inputError : ''}`}
               minLength="6"
               required
             />
             {formError.password && (
-              <div className={styles.errorMessage}>{formError.password}</div>
+              <div className={styles.fieldErrorMessage}>{formError.password}</div>
             )}
           </div>
 
@@ -225,13 +258,13 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
               type="tel"
               name="mobileNo"
               placeholder="Phone Number"
-              value={formData.mobileNo} // Fixed: use mobileNo instead of phoneNumber
+              value={formData.mobileNo}
               onChange={handleChange}
-              className={styles.input}
+              className={`${styles.input} ${formError.mobileNo ? styles.inputError : ''}`}
               required
             />
             {formError.mobileNo && (
-              <div className={styles.errorMessage}>{formError.mobileNo}</div>
+              <div className={styles.fieldErrorMessage}>{formError.mobileNo}</div>
             )}
           </div>
 
