@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Routes, Route, Link, useNavigate, Navigate, useLocation } from "react-router-dom";
 import styles from "./App.module.css";
 import LandingPage from "./components/Landing/LandingPage";
-import Dashboard from "./components/user/Dashboard";
+import Dashboard from "./components/user/UserDashboard";
 import LoginModal from "./components/Landing/LoginModal";
 import SignupModal from "./components/Landing/SignupModal";
 import Promotion from "./assets/Promotion";

@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from './LandingPage.module.css';
-import LoginModal from './LoginModal';
-import SignupModal from './SignupModal';
+import { getApiWithAuth } from '../../constants/GetMethod'; 
+import { LANDING_STATS_URL } from '../../constants/apiConstants';
 
 const LandingPage = () => {
   const [activeTab, setActiveTab] = useState('All Courses');
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showSignupModal, setShowSignupModal] = useState(false);
+  const [stats, setStats] = useState({
+    courseCount: null, 
+    learnerCount: null, 
+    doubtsCount: 100000,
+    projectsCount: 10000
+  });
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
 
   const tabs = ['All Courses', 'Design', 'Development', 'IT & Software', 'Business'];
 
@@ -100,6 +105,46 @@ const LandingPage = () => {
     }
   ];
 
+  // Function to fetch stats from API
+  const fetchStats = async () => {
+    try {
+      setIsLoadingStats(true);
+      const response = await getApiWithAuth(LANDING_STATS_URL);
+      
+      if (response.data && response.data.status === 'success') {
+        const apiStats = response.data.payload;
+        setStats(prevStats => ({
+          ...prevStats,
+          courseCount: apiStats.courseCount || null,
+          learnerCount: apiStats.learnerCount || null,
+          // Keep other stats as they are
+          doubtsCount: prevStats.doubtsCount,
+          projectsCount: prevStats.projectsCount
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+      // Keep stats as null on error - they will be handled in the render
+    } finally {
+      setIsLoadingStats(false);
+    }
+  };
+
+  // Fetch stats on component mount
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  // Helper function to format numbers
+  const formatNumber = (num) => {
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(1) + 'M';
+    } else if (num >= 1000) {
+      return (num / 1000).toFixed(0) + 'K';
+    }
+    return num.toString();
+  };
+
   const handleSwitchToSignup = () => {
     setShowLoginModal(false);
     setShowSignupModal(true);
@@ -183,29 +228,37 @@ const LandingPage = () => {
             </div>
           </div>
           
-          {/* Stats Section */}
+          {/* Stats Section - Updated with API data */}
           <div className={`${styles.statSection} row g-4 py-5`}>
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className={`${styles.statCard} text-center`}>
-                <span className={styles.statNumber}>42+</span>
+                {isLoadingStats || stats.courseCount === null ? (
+                  <span className={styles.statNumber}>...</span>
+                ) : (
+                  <span className={styles.statNumber}>{stats.courseCount}+</span>
+                )}
                 <span className={styles.statLabel}>Courses</span>
               </div>
             </div>
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className={`${styles.statCard} text-center`}>
-                <span className={styles.statNumber}>90K+</span>
+                {isLoadingStats || stats.learnerCount === null ? (
+                  <span className={styles.statNumber}>...</span>
+                ) : (
+                  <span className={styles.statNumber}>{formatNumber(stats.learnerCount)}+</span>
+                )}
                 <span className={styles.statLabel}>Learners</span>
               </div>
             </div>
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className={`${styles.statCard} text-center`}>
-                <span className={styles.statNumber}>100K+</span>
+                <span className={styles.statNumber}>{formatNumber(stats.doubtsCount)}+</span>
                 <span className={styles.statLabel}>Doubts Solved</span>
               </div>
             </div>
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className={`${styles.statCard} text-center`}>
-                <span className={styles.statNumber}>10K+</span>
+                <span className={styles.statNumber}>{formatNumber(stats.projectsCount)}+</span>
                 <span className={styles.statLabel}>Student Projects</span>
               </div>
             </div>
@@ -478,19 +531,6 @@ const LandingPage = () => {
           </div>
         </div>
       </footer>
-
-      {/* Modals
-      <LoginModal 
-        isOpen={showLoginModal}
-        onClose={closeModals}
-        onSwitchToSignup={handleSwitchToSignup}
-      />
-      
-      <SignupModal 
-        isOpen={showSignupModal}
-        onClose={closeModals}
-        onSwitchToLogin={handleSwitchToLogin}
-      /> */}
     </div>
   );
 };

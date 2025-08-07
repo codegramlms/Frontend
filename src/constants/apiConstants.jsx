@@ -9,3 +9,6 @@ export const API_BASE_PUBLIC_URL = `${API_BASE_URL}/public`;
 //Auth
 export const LOGIN_URL = `${API_BASE_URL}/auth/login`;
 export const REGISTER_URL = `${API_BASE_URL}/auth/register`;
+
+//Landing
+export const LANDING_STATS_URL = `${API_BASE_PUBLIC_URL}/landing/stats`;

@@ -118,10 +118,6 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup }) => {
       // Call the login API using GET request with params
       const response = await getApiWithAuth(LOGIN_URL, loginParams);
       
-      console.log('Full API response:', response);
-      console.log('Response data:', response.data);
-      console.log('Response status:', response.status);
-
       if (response.data && response.data.status === 'success') {
         console.log('Login successful:', response.data);
         sessionStorage.setItem('user', JSON.stringify(response.data.payload.user));
