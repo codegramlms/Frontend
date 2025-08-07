@@ -140,22 +140,7 @@ const LandingPage = () => {
     } else if (num >= 1000) {
       return (num / 1000).toFixed(0) + 'K';
     }
-    return num;
-  };
-
-  const handleSwitchToSignup = () => {
-    setShowLoginModal(false);
-    setShowSignupModal(true);
-  };
-
-  const handleSwitchToLogin = () => {
-    setShowSignupModal(false);
-    setShowLoginModal(true);
-  };
-
-  const closeModals = () => {
-    setShowLoginModal(false);
-    setShowSignupModal(false);
+    return num.toString();
   };
 
   return (
