@@ -172,7 +172,7 @@ const LandingPage = () => {
                   </div>
                   <div className={`${styles.reviewCard}`}>
                     <span className={styles.googleIcon}>G</span>
-                    <span>Google Reviews</span>
+                    <span> Google Reviews</span>
                     <div className={styles.reviewRating}>
                       <span>4.9/5</span>
                       <div className={styles.reviewStars}>⭐⭐⭐⭐⭐</div>

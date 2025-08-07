@@ -1,6 +1,6 @@
 import React from "react";
 import styles from './CodegramHomePage.module.css';
-import src from './logo.png';
+import src from './fullLogo.png';
 
 export default function CodegramHomePage() {
   const handleFormRedirect = () => {
