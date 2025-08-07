@@ -250,7 +250,7 @@ const LandingPage = () => {
             </div>
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className={`${styles.statCard} text-center`}>
-                {isLoadingStats || stats.learnerCount === null ? (
+                {isLoadingStats || stats.doubtsCount === null ? (
                      <span className={styles.statNumber}>...</span>
                 ) : (
                   <span className={styles.statNumber}>{formatNumber(stats.doubtsCount)}+</span>
@@ -260,7 +260,7 @@ const LandingPage = () => {
             </div>
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className={`${styles.statCard} text-center`}>
-                {isLoadingStats || stats.learnerCount === null ? (
+                {isLoadingStats || stats.projectsCount === null ? (
                      <span className={styles.statNumber}>...</span>
                 ) : (
                   <span className={styles.statNumber}>{formatNumber(stats.projectsCount)}+</span>
