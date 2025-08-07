@@ -9,8 +9,8 @@ const LandingPage = () => {
   const [stats, setStats] = useState({
     courseCount: null, 
     learnerCount: null, 
-    doubtsCount: 100000,
-    projectsCount: 10000
+    doubtsCount: null,
+    projectsCount: null
   });
   const [isLoadingStats, setIsLoadingStats] = useState(true);
 
@@ -113,13 +113,11 @@ const LandingPage = () => {
       
       if (response.data && response.data.status === 'success') {
         const apiStats = response.data.payload;
-        setStats(prevStats => ({
-          ...prevStats,
+        setStats(({
           courseCount: apiStats.courseCount || null,
           learnerCount: apiStats.learnerCount || null,
-          // Keep other stats as they are
-          doubtsCount: prevStats.doubtsCount,
-          projectsCount: prevStats.projectsCount
+          doubtsCount: apiStats.doubtsCount || null,
+          projectsCount: apiStats.projectsCount || null
         }));
       }
     } catch (error) {
@@ -142,7 +140,7 @@ const LandingPage = () => {
     } else if (num >= 1000) {
       return (num / 1000).toFixed(0) + 'K';
     }
-    return num.toString();
+    return num;
   };
 
   const handleSwitchToSignup = () => {
@@ -252,13 +250,21 @@ const LandingPage = () => {
             </div>
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className={`${styles.statCard} text-center`}>
-                <span className={styles.statNumber}>{formatNumber(stats.doubtsCount)}+</span>
+                {isLoadingStats || stats.learnerCount === null ? (
+                     <span className={styles.statNumber}>...</span>
+                ) : (
+                  <span className={styles.statNumber}>{formatNumber(stats.doubtsCount)}+</span>
+                )}
                 <span className={styles.statLabel}>Doubts Solved</span>
               </div>
             </div>
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className={`${styles.statCard} text-center`}>
-                <span className={styles.statNumber}>{formatNumber(stats.projectsCount)}+</span>
+                {isLoadingStats || stats.learnerCount === null ? (
+                     <span className={styles.statNumber}>...</span>
+                ) : (
+                  <span className={styles.statNumber}>{formatNumber(stats.projectsCount)}+</span>
+                )}
                 <span className={styles.statLabel}>Student Projects</span>
               </div>
             </div>
