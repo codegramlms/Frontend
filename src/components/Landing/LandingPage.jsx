@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from './LandingPage.module.css';
 import { getApiWithAuth } from '../../constants/GetMethod'; 
-import { LANDING_STATS_URL } from '../../constants/apiConstants';
+import { LANDING_STATS_URL, LANDING_COURSES_URL } from '../../constants/apiConstants';
 
 const LandingPage = () => {
   const [activeTab, setActiveTab] = useState('All Courses');
@@ -13,19 +13,20 @@ const LandingPage = () => {
     projectsCount: null
   });
   const [isLoadingStats, setIsLoadingStats] = useState(true);
+  const [courses, setCourses] = useState([]);
+  const [isLoadingCourses, setIsLoadingCourses] = useState(true);
+  const [tabs, setTabs] = useState(['All Courses']);
 
-  const tabs = ['All Courses', 'Design', 'Development', 'IT & Software', 'Business'];
-
-  const courses = [
-    { title: 'Full Stack Web Development', icon: '🌐', category: 'Development' },
-    { title: 'UI/UX Design Mastery', icon: '🎨', category: 'Design' },
-    { title: 'Data Science & Analytics', icon: '📊', category: 'IT & Software' },
-    { title: 'Digital Marketing Pro', icon: '📱', category: 'Business' },
-    { title: 'Cloud Computing AWS', icon: '☁️', category: 'IT & Software' },
-    { title: 'Mobile App Development', icon: '📲', category: 'Development' },
-    { title: 'Cybersecurity Fundamentals', icon: '🔒', category: 'IT & Software' },
-    { title: 'Graphic Design Studio', icon: '🖼️', category: 'Design' }
-  ];
+  // Course category icons mapping
+  const categoryIcons = {
+    'Development': '🌐',
+    'Design': '🎨',
+    'IT & Software': '📊',
+    'Business': '📱',
+    'AI': '🤖',
+    'Coding': '💻',
+    'Default': '📚'
+  };
 
   const comboPacks = [
     {
@@ -113,12 +114,12 @@ const LandingPage = () => {
       
       if (response.data && response.data.status === 'success') {
         const apiStats = response.data.payload;
-        setStats(({
+        setStats({
           courseCount: apiStats.courseCount || null,
           learnerCount: apiStats.learnerCount || null,
           doubtsCount: apiStats.doubtsCount || null,
           projectsCount: apiStats.projectsCount || null
-        }));
+        });
       }
     } catch (error) {
       console.error('Error fetching stats:', error);
@@ -128,9 +129,32 @@ const LandingPage = () => {
     }
   };
 
-  // Fetch stats on component mount
+  // Function to fetch courses from API
+  const fetchCourses = async () => {
+    try {
+      setIsLoadingCourses(true);
+      const response = await getApiWithAuth(LANDING_COURSES_URL);
+      
+      if (response.data && response.data.status === 'success') {
+        const coursesData = response.data.payload;
+        setCourses(coursesData);
+        
+        // Extract unique categories and create tabs
+        const categories = [...new Set(coursesData.map(course => course.parentCategory))];
+        setTabs(['All Courses', ...categories]);
+      }
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+      setCourses([]);
+    } finally {
+      setIsLoadingCourses(false);
+    }
+  };
+
+  // Fetch data on component mount
   useEffect(() => {
     fetchStats();
+    fetchCourses();
   }, []);
 
   // Helper function to format numbers
@@ -141,6 +165,19 @@ const LandingPage = () => {
       return (num / 1000).toFixed(0) + 'K';
     }
     return num.toString();
+  };
+
+  // Filter courses based on active tab
+  const filteredCourses = courses.filter(course => {
+    if (activeTab === 'All Courses') {
+      return true;
+    }
+    return course.parentCategory === activeTab;
+  });
+
+  // Get icon for category
+  const getCategoryIcon = (category) => {
+    return categoryIcons[category] || categoryIcons['Default'];
   };
 
   return (
@@ -279,17 +316,32 @@ const LandingPage = () => {
             ))}
           </div>
 
-          <div className="row g-4">
-            {courses.map((course, index) => (
-              <div key={index} className="col-xl-3 col-lg-4 col-md-6 col-sm-6">
-                <div className={`${styles.courseCard} h-100 text-center`}>
-                  <div className={styles.courseIcon}>{course.icon}</div>
-                  <h3 className={styles.courseTitle}>{course.title}</h3>
-                  <span className={styles.courseCategory}>{course.category}</span>
-                </div>
+          {isLoadingCourses ? (
+            <div className="text-center py-5">
+              <div className="spinner-border" role="status">
+                <span className="visually-hidden">Loading courses...</span>
               </div>
-            ))}
-          </div>
+              <p className="mt-3">Loading courses...</p>
+            </div>
+          ) : filteredCourses.length === 0 ? (
+            <div className="text-center py-5">
+              <p>No courses found for the selected category.</p>
+            </div>
+          ) : (
+            <div className="row g-4">
+              {filteredCourses.map((course, index) => (
+                <div key={course.id || index} className="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                  <div className={`${styles.courseCard} h-100 text-center`}>
+                    <div className={styles.courseIcon}>
+                      {getCategoryIcon(course.parentCategory)}
+                    </div>
+                    <h3 className={styles.courseTitle}>{course.courseName}</h3>
+                    <span className={styles.courseCategory}>{course.parentCategory}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
