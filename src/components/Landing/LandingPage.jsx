@@ -110,26 +110,29 @@ const LandingPage = () => {
   };
 
   // Function to fetch courses from API
-  const fetchCourses = async () => {
-    try {
-      setIsLoadingCourses(true);
-      const response = await getApiWithAuth(LANDING_COURSES_URL);
+// Updated function to fetch courses from API
+const fetchCourses = async () => {
+  try {
+    setIsLoadingCourses(true);
+    const response = await getApiWithAuth(LANDING_COURSES_URL);
+    
+    if (response.data && response.data.status === 'success') {
+      const payload = response.data.payload;
+      const coursesData = payload.courseList || [];
+      const displayCategories = payload.displayCategories || [];
       
-      if (response.data && response.data.status === 'success') {
-        const coursesData = response.data.payload;
-        setCourses(coursesData);
-        
-        // Extract unique categories and create tabs
-        const categories = [...new Set(coursesData.map(course => course.displayCategory))];
-        setTabs(['All Courses', ...categories]);
-      }
-    } catch (error) {
-      console.error('Error fetching courses:', error);
-      setCourses([]);
-    } finally {
-      setIsLoadingCourses(false);
+      setCourses(coursesData);
+      
+      // Create tabs using the displayCategories from API response
+      setTabs(['All Courses', ...displayCategories]);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching courses:', error);
+    setCourses([]);
+  } finally {
+    setIsLoadingCourses(false);
+  }
+};
 
   // Function to fetch FAQs from API
   const fetchFaqs = async () => {
