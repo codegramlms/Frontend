@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from './LandingPage.module.css';
 import { getApiWithAuth } from '../../constants/GetMethod'; 
-import { LANDING_STATS_URL, LANDING_COURSES_URL } from '../../constants/apiConstants';
+import { LANDING_STATS_URL, LANDING_COURSES_URL, LANDING_FAQ_URL } from '../../constants/apiConstants';
+import LandingPageImage from '../../assets/landing.png';
 
 const LandingPage = () => {
   const [activeTab, setActiveTab] = useState('All Courses');
@@ -16,6 +17,8 @@ const LandingPage = () => {
   const [courses, setCourses] = useState([]);
   const [isLoadingCourses, setIsLoadingCourses] = useState(true);
   const [tabs, setTabs] = useState(['All Courses']);
+  const [faqs, setFaqs] = useState([]);
+  const [isLoadingFaqs, setIsLoadingFaqs] = useState(true);
 
   // Course category icons mapping
   const categoryIcons = {
@@ -66,7 +69,7 @@ const LandingPage = () => {
     {
       name: 'Sarah Johnson',
       role: 'Full Stack Developer at Google',
-      content: 'TechMaster transformed my career completely. The mentorship program and hands-on projects gave me the confidence to land my dream job.',
+      content: 'CodeGram transformed my career completely. The mentorship program and hands-on projects gave me the confidence to land my dream job.',
       rating: 5
     },
     {
@@ -80,29 +83,6 @@ const LandingPage = () => {
       role: 'Data Scientist at Microsoft',
       content: 'Amazing learning experience with real-world projects. The career support team helped me get multiple job offers.',
       rating: 5
-    }
-  ];
-
-  const faqs = [
-    {
-      question: 'Why should I opt for TechMaster?',
-      answer: 'TechMaster offers industry-relevant curriculum, expert mentorship, and guaranteed internship opportunities with 100% refund guarantee.'
-    },
-    {
-      question: 'What is the validity of the courses and when can I watch them?',
-      answer: 'All courses have lifetime access. You can watch them anytime, anywhere at your own pace with mobile and desktop support.'
-    },
-    {
-      question: 'Will my course validity expire after I receive the 100% refund amount?',
-      answer: 'No, course access remains valid even after refund. We believe in our quality and want you to succeed.'
-    },
-    {
-      question: 'How will I know that 100% Refund offer has been applied?',
-      answer: 'You will receive email confirmation and see the refund status in your dashboard within 24 hours of enrollment.'
-    },
-    {
-      question: 'How will I receive my 100% Refund amount?',
-      answer: 'Refunds are processed through the original payment method within 5-7 business days of completion.'
     }
   ];
 
@@ -140,7 +120,7 @@ const LandingPage = () => {
         setCourses(coursesData);
         
         // Extract unique categories and create tabs
-        const categories = [...new Set(coursesData.map(course => course.parentCategory))];
+        const categories = [...new Set(coursesData.map(course => course.displayCategory))];
         setTabs(['All Courses', ...categories]);
       }
     } catch (error) {
@@ -151,10 +131,29 @@ const LandingPage = () => {
     }
   };
 
+  // Function to fetch FAQs from API
+  const fetchFaqs = async () => {
+    try {
+      setIsLoadingFaqs(true);
+      const response = await getApiWithAuth(LANDING_FAQ_URL);
+      
+      if (response.data && response.data.status === 'success') {
+        const faqsData = response.data.payload;
+        setFaqs(faqsData);
+      }
+    } catch (error) {
+      console.error('Error fetching FAQs:', error);
+      setFaqs([]);
+    } finally {
+      setIsLoadingFaqs(false);
+    }
+  };
+
   // Fetch data on component mount
   useEffect(() => {
     fetchStats();
     fetchCourses();
+    fetchFaqs();
   }, []);
 
   // Helper function to format numbers
@@ -172,7 +171,7 @@ const LandingPage = () => {
     if (activeTab === 'All Courses') {
       return true;
     }
-    return course.parentCategory === activeTab;
+    return course.displayCategory === activeTab;
   });
 
   // Get icon for category
@@ -229,11 +228,11 @@ const LandingPage = () => {
                     <span className={styles.cardIcon}>💡</span>
                     <span>Instant doubt Support</span>
                   </div>
-                  <div className={styles.mainImage}>
-                    <div className={styles.studentAvatar}>👨‍💻</div>
-                  </div>
-                  <div className={styles.womanImage}>
-                    <div className={styles.womanAvatar}>👩‍💼</div>
+                  <div>
+                        <img
+                        src={LandingPageImage}
+                        className={styles.mainImage}
+                        />
                   </div>
                   <div className={`${styles.reviewCard}`}>
                     <span className={styles.googleIcon}>G</span>
@@ -333,10 +332,10 @@ const LandingPage = () => {
                 <div key={course.id || index} className="col-xl-3 col-lg-4 col-md-6 col-sm-6">
                   <div className={`${styles.courseCard} h-100 text-center`}>
                     <div className={styles.courseIcon}>
-                      {getCategoryIcon(course.parentCategory)}
+                      {getCategoryIcon(course.displayCategory)}
                     </div>
                     <h3 className={styles.courseTitle}>{course.courseName}</h3>
-                    <span className={styles.courseCategory}>{course.parentCategory}</span>
+                    <span className={styles.courseCategory}>{course.displayCategory}</span>
                   </div>
                 </div>
               ))}
@@ -413,7 +412,7 @@ const LandingPage = () => {
          {/* Why Choose Us */}
       <section className={`${styles.whyChooseSection} py-5`}>
         <div className="container">
-          <h2 className={`${styles.sectionTitle} text-center mb-3`}>Why Choose TechMaster?</h2>
+          <h2 className={`${styles.sectionTitle} text-center mb-3`}>Why Choose CodeGram?</h2>
           <p className={`${styles.sectionSubtitle} text-center mb-5`}>
             Get instant mentorship, internship opportunities and a supportive learning community.
           </p>
@@ -437,7 +436,7 @@ const LandingPage = () => {
                 <thead>
                   <tr>
                     <th>Features</th>
-                    <th>TechMaster</th>
+                    <th>CodeGram</th>
                     <th>Recorded Class Platform</th>
                     <th>Live Class Platform</th>
                   </tr>
@@ -463,12 +462,6 @@ const LandingPage = () => {
                   </tr>
                   <tr>
                     <td>Personal Mentorship</td>
-                    <td className={styles.checkmark}>✅</td>
-                    <td className={styles.crossmark}>❌</td>
-                    <td className={styles.crossmark}>❌</td>
-                  </tr>
-                  <tr>
-                    <td>Guaranteed Paid Internship</td>
                     <td className={styles.checkmark}>✅</td>
                     <td className={styles.crossmark}>❌</td>
                     <td className={styles.crossmark}>❌</td>
@@ -503,20 +496,33 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* FAQ Section */}
+      {/* FAQ Section - Updated with API integration */}
       <section className={`${styles.faqSection} py-5`}>
         <div className="container">
           <h2 className={`${styles.sectionTitle} text-center mb-5`}>Got Questions? Check Out Our FAQs!</h2>
           <div className="row justify-content-center">
             <div className="col-lg-8">
-              <div className={styles.faqList}>
-                {faqs.map((faq, index) => (
-                  <div key={index} className={`${styles.faqItem} mb-3`}>
-                    <h3 className={styles.faqQuestion}>{faq.question}</h3>
-                    <p className={styles.faqAnswer}>{faq.answer}</p>
+              {isLoadingFaqs ? (
+                <div className="text-center py-5">
+                  <div className="spinner-border" role="status">
+                    <span className="visually-hidden">Loading FAQs...</span>
                   </div>
-                ))}
-              </div>
+                  <p className="mt-3">Loading FAQs...</p>
+                </div>
+              ) : faqs.length === 0 ? (
+                <div className="text-center py-5">
+                  <p>No FAQs available at the moment.</p>
+                </div>
+              ) : (
+                <div className={styles.faqList}>
+                  {faqs.map((faq, index) => (
+                    <div key={faq.id || index} className={`${styles.faqItem} mb-3`}>
+                      <h3 className={styles.faqQuestion}>{faq.question}</h3>
+                      <p className={styles.faqAnswer}>{faq.answer}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
