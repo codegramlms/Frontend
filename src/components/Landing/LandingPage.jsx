@@ -19,6 +19,7 @@ const LandingPage = () => {
   const [tabs, setTabs] = useState(['All Courses']);
   const [faqs, setFaqs] = useState([]);
   const [isLoadingFaqs, setIsLoadingFaqs] = useState(true);
+  const [expandedFaq, setExpandedFaq] = useState(null);
 
   // Course category icons mapping
   const categoryIcons = {
@@ -181,6 +182,10 @@ const fetchCourses = async () => {
   const getCategoryIcon = (category) => {
     return categoryIcons[category] || categoryIcons['Default'];
   };
+
+  const toggleFaq = (index) => {
+  setExpandedFaq(expandedFaq === index ? null : index);
+};
 
   return (
     <div className={styles.container}>
@@ -500,36 +505,47 @@ const fetchCourses = async () => {
       </section>
 
       {/* FAQ Section - Updated with API integration */}
-      <section className={`${styles.faqSection} py-5`}>
-        <div className="container">
-          <h2 className={`${styles.sectionTitle} text-center mb-5`}>Got Questions? Check Out Our FAQs!</h2>
-          <div className="row justify-content-center">
-            <div className="col-lg-8">
-              {isLoadingFaqs ? (
-                <div className="text-center py-5">
-                  <div className="spinner-border" role="status">
-                    <span className="visually-hidden">Loading FAQs...</span>
-                  </div>
-                  <p className="mt-3">Loading FAQs...</p>
-                </div>
-              ) : faqs.length === 0 ? (
-                <div className="text-center py-5">
-                  <p>No FAQs available at the moment.</p>
-                </div>
-              ) : (
-                <div className={styles.faqList}>
-                  {faqs.map((faq, index) => (
-                    <div key={faq.id || index} className={`${styles.faqItem} mb-3`}>
-                      <h3 className={styles.faqQuestion}>{faq.question}</h3>
-                      <p className={styles.faqAnswer}>{faq.answer}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
+     <section className={`${styles.faqSection} py-5`}>
+  <div className="container">
+    <h2 className={`${styles.sectionTitle} text-center mb-5`}>Got Questions? Check Out Our FAQs!</h2>
+    <div className="row justify-content-center">
+      <div className="col-lg-8">
+        {isLoadingFaqs ? (
+          <div className="text-center py-5">
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading FAQs...</span>
             </div>
+            <p className="mt-3">Loading FAQs...</p>
           </div>
-        </div>
-      </section>
+        ) : faqs.length === 0 ? (
+          <div className="text-center py-5">
+            <p>No FAQs available at the moment.</p>
+          </div>
+        ) : (
+          <div className={styles.faqList}>
+            {faqs.map((faq, index) => (
+              <div key={faq.id || index} className={`${styles.faqItem} mb-3`}>
+                <h3 
+                  className={styles.faqQuestion}
+                  onClick={() => toggleFaq(index)}
+                  data-expanded={expandedFaq === index}
+                >
+                  {faq.question}
+                  <span className={styles.faqIcon}>
+                    {expandedFaq === index ? '-' : '+'}
+                  </span>
+                </h3>
+                {expandedFaq === index && (
+                  <p className={styles.faqAnswer}>{faq.answer}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Footer */}
       <footer className={`${styles.footer} py-5`}>
