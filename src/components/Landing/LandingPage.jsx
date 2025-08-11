@@ -19,6 +19,7 @@ const LandingPage = () => {
   const [tabs, setTabs] = useState(['All Courses']);
   const [faqs, setFaqs] = useState([]);
   const [isLoadingFaqs, setIsLoadingFaqs] = useState(true);
+  const [expandedFaq, setExpandedFaq] = useState(null);
 
   // Course category icons mapping
   const categoryIcons = {
@@ -181,6 +182,10 @@ const fetchCourses = async () => {
   const getCategoryIcon = (category) => {
     return categoryIcons[category] || categoryIcons['Default'];
   };
+
+  const toggleFaq = (index) => {
+  setExpandedFaq(expandedFaq === index ? null : index);
+};
 
   return (
     <div className={styles.container}>
