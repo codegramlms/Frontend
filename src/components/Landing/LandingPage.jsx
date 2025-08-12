@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from './LandingPage.module.css';
 import { getApiWithAuth } from '../../constants/GetMethod'; 
-import { LANDING_STATS_URL, LANDING_COURSES_URL, LANDING_FAQ_URL } from '../../constants/apiConstants';
+import { LANDING_STATS_URL, LANDING_COURSES_URL, LANDING_FAQ_URL, LANDING_COMBOPACK_URL } from '../../constants/apiConstants';
 import LandingPageImage from '../../assets/landing.png';
 
 const LandingPage = () => {
@@ -10,7 +10,7 @@ const LandingPage = () => {
   const [stats, setStats] = useState({
     courseCount: null, 
     learnerCount: null, 
-    doubtsCount: null,
+    internshipCount: null,
     projectsCount: null
   });
   const [isLoadingStats, setIsLoadingStats] = useState(true);
@@ -20,50 +20,30 @@ const LandingPage = () => {
   const [faqs, setFaqs] = useState([]);
   const [isLoadingFaqs, setIsLoadingFaqs] = useState(true);
   const [expandedFaq, setExpandedFaq] = useState(null);
+  
+  // New state for combo packs
+  const [comboPacks, setComboPacks] = useState([]);
+  const [isLoadingComboPacks, setIsLoadingComboPacks] = useState(true);
+
+  // Ref for courses section
+  const coursesRef = useRef(null);
 
   // Course category icons mapping
   const categoryIcons = {
     'Development': '🌐',
     'Design': '🎨',
-    'IT & Software': '📊',
+    'IT And Software': '📊',
     'Business': '📱',
     'AI': '🤖',
     'Coding': '💻',
     'Default': '📚'
   };
 
-  const comboPacks = [
-    {
-      title: 'Full Stack Developer Pack',
-      courses: ['HTML/CSS', 'JavaScript', 'React.js', 'Node.js', 'MongoDB', 'AWS'],
-      duration: '6 months',
-      color: 'blue'
-    },
-    {
-      title: 'Creative Designer Pack',
-      courses: ['Photoshop', 'Illustrator', 'Figma', 'UI/UX', 'Branding', 'Portfolio'],
-      duration: '4 months',
-      color: 'blue'
-    },
-    {
-      title: 'Data Scientist Pack',
-      courses: ['Python', 'SQL', 'Machine Learning', 'Tableau', 'Statistics', 'AI'],
-      duration: '8 months',
-      color: 'blue'
-    },
-    {
-      title: 'Business Growth Pack',
-      courses: ['Marketing', 'Analytics', 'SEO', 'Social Media', 'Strategy', 'Leadership'],
-      duration: '5 months',
-      color: 'blue'
-    }
-  ];
-
   const features = [
-    { icon: '💰', title: '100% Refund Guarantee', desc: 'Get full refund if not satisfied' },
-    { icon: '🎯', title: 'Personalized Mentorship', desc: '1-on-1 guidance from experts' },
+    { icon: '💲', title: '100% Refund Guarantee', desc: 'Get full refund if not satisfied' },
+    { icon: '💬', title: 'Query Resolution', desc: 'Query resolution within 7 days with text support' },
     { icon: '💼', title: 'Internship Opportunities', desc: 'Guaranteed placement assistance' },
-    { icon: '🏆', title: 'Industry Certificates', desc: 'Recognized by top companies' }
+    { icon: '🏅', title: 'Industry Certificates', desc: 'Recognized by top companies' }
   ];
 
   const testimonials = [
@@ -87,6 +67,16 @@ const LandingPage = () => {
     }
   ];
 
+  // Function to scroll to courses section
+  const scrollToCourses = () => {
+    if (coursesRef.current) {
+      coursesRef.current.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
   // Function to fetch stats from API
   const fetchStats = async () => {
     try {
@@ -98,7 +88,7 @@ const LandingPage = () => {
         setStats({
           courseCount: apiStats.courseCount || null,
           learnerCount: apiStats.learnerCount || null,
-          doubtsCount: apiStats.doubtsCount || null,
+          internshipCount: apiStats.internshipCount || null,
           projectsCount: apiStats.projectsCount || null
         });
       }
@@ -111,29 +101,47 @@ const LandingPage = () => {
   };
 
   // Function to fetch courses from API
-// Updated function to fetch courses from API
-const fetchCourses = async () => {
-  try {
-    setIsLoadingCourses(true);
-    const response = await getApiWithAuth(LANDING_COURSES_URL);
-    
-    if (response.data && response.data.status === 'success') {
-      const payload = response.data.payload;
-      const coursesData = payload.courseList || [];
-      const displayCategories = payload.displayCategories || [];
+  const fetchCourses = async () => {
+    try {
+      setIsLoadingCourses(true);
+      const response = await getApiWithAuth(LANDING_COURSES_URL);
       
-      setCourses(coursesData);
-      
-      // Create tabs using the displayCategories from API response
-      setTabs(['All Courses', ...displayCategories]);
+      if (response.data && response.data.status === 'success') {
+        const payload = response.data.payload;
+        const coursesData = payload.courseList || [];
+        const displayCategories = payload.displayCategories || [];
+        
+        setCourses(coursesData);
+        
+        // Create tabs using the displayCategories from API response
+        setTabs(['All Courses', ...displayCategories]);
+      }
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+      setCourses([]);
+    } finally {
+      setIsLoadingCourses(false);
     }
-  } catch (error) {
-    console.error('Error fetching courses:', error);
-    setCourses([]);
-  } finally {
-    setIsLoadingCourses(false);
-  }
-};
+  };
+
+  // Function to fetch combo packs from API
+  const fetchComboPacks = async () => {
+    try {
+      setIsLoadingComboPacks(true);
+      const response = await getApiWithAuth(LANDING_COMBOPACK_URL);
+      
+      if (response.data && response.data.status === 'success') {
+        const payload = response.data.payload;
+        const comboPacksData = payload.courseComboList || [];
+        setComboPacks(comboPacksData);
+      }
+    } catch (error) {
+      console.error('Error fetching combo packs:', error);
+      setComboPacks([]);
+    } finally {
+      setIsLoadingComboPacks(false);
+    }
+  };
 
   // Function to fetch FAQs from API
   const fetchFaqs = async () => {
@@ -157,6 +165,7 @@ const fetchCourses = async () => {
   useEffect(() => {
     fetchStats();
     fetchCourses();
+    fetchComboPacks();
     fetchFaqs();
   }, []);
 
@@ -168,6 +177,24 @@ const fetchCourses = async () => {
       return (num / 1000).toFixed(0) + 'K';
     }
     return num.toString();
+  };
+
+  // Helper function to format duration
+  const formatDuration = (durationInHours) => {
+    if (!durationInHours || durationInHours === 0) {
+      return 'Variable duration';
+    }
+    
+    return `${durationInHours} hour${durationInHours > 1 ? 's' : ''}`;
+  };
+
+  // Helper function to calculate total duration for combo pack
+  const calculateComboDuration = (courseList) => {
+    const totalHours = courseList.reduce((sum, course) => {
+      return sum + (course.durationInHours || 0);
+    }, 0);
+    
+    return formatDuration(totalHours);
   };
 
   // Filter courses based on active tab
@@ -184,8 +211,8 @@ const fetchCourses = async () => {
   };
 
   const toggleFaq = (index) => {
-  setExpandedFaq(expandedFaq === index ? null : index);
-};
+    setExpandedFaq(expandedFaq === index ? null : index);
+  };
 
   return (
     <div className={styles.container}>
@@ -221,7 +248,12 @@ const fetchCourses = async () => {
                   <span className={styles.ratingSubtext}>Google Ratings</span>
                 </div>
                 <div className={`${styles.heroButtons} d-flex gap-3`}>
-                  <button className={`${styles.exploreCourses} btn btn-lg`}>Explore Courses</button>
+                  <button 
+                    className={`${styles.exploreCourses} btn btn-lg`}
+                    onClick={scrollToCourses}
+                  >
+                    Explore Courses
+                  </button>
                 </div>
               </div>
             </div>
@@ -279,12 +311,12 @@ const fetchCourses = async () => {
             </div>
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className={`${styles.statCard} text-center`}>
-                {isLoadingStats || stats.doubtsCount === null ? (
+                {isLoadingStats || stats.internshipCount === null ? (
                      <span className={styles.statNumber}>...</span>
                 ) : (
-                  <span className={styles.statNumber}>{formatNumber(stats.doubtsCount)}+</span>
+                  <span className={styles.statNumber}>{formatNumber(stats.internshipCount)}+</span>
                 )}
-                <span className={styles.statLabel}>Doubts Solved</span>
+                <span className={styles.statLabel}>Internship Provided</span>
               </div>
             </div>
             <div className="col-lg-3 col-md-6 col-sm-6">
@@ -302,7 +334,7 @@ const fetchCourses = async () => {
       </section>
 
       {/* Courses Section */}
-      <section className={`${styles.coursesSection} py-5`}>
+      <section ref={coursesRef} className={`${styles.coursesSection} py-5`}>
         <div className="container">
           <div className={`${styles.sectionHeader} text-center mb-5`}>
             <h2 className={styles.sectionTitle}>Browse our Courses</h2>
@@ -352,53 +384,78 @@ const fetchCourses = async () => {
         </div>
       </section>
 
-      {/* Combo Packs */}
+     {/* Combo Packs - Updated with API integration */}
       <section className={`${styles.comboSection} py-5`}>
         <div className="container">
           <h2 className={`${styles.comboPackTitle} text-center mb-5`}>Interested in our Combo Packs?</h2>
-          <div className="row g-4">
-            {comboPacks.map((pack, index) => (
-              <div key={index} className="col-xl-3 col-lg-6 col-md-6">
-                <div className={`${styles.comboCard} h-100`}>
-                  <h3 className={styles.comboTitle}>{pack.title}</h3>
-                  <div className={`${styles.comboCourses} d-flex flex-wrap gap-2 mb-3`}>
-                    {pack.courses.map((course, idx) => (
-                      <span key={idx} className={styles.comboTag}>{course}</span>
-                    ))}
-                  </div>
-                  <p className={styles.comboDuration}>Duration: {pack.duration}</p>
-                  <button className={`${styles.knowMore} btn`}>Know More</button>
-                </div>
+          
+          {isLoadingComboPacks ? (
+            <div className="text-center py-5">
+              <div className="spinner-border" role="status">
+                <span className="visually-hidden">Loading combo packs...</span>
               </div>
-            ))}
-          </div>
+              <p className="mt-3">Loading combo packs...</p>
+            </div>
+          ) : comboPacks.length === 0 ? (
+            <div className="text-center py-5">
+              <p>No combo packs available at the moment.</p>
+            </div>
+          ) : (
+            <div className="row g-4">
+              {comboPacks.map((pack, index) => (
+                <div key={pack.comboId || index} className="col-xl-3 col-lg-6 col-md-6">
+                  <div className={`${styles.comboCard} h-100`}>
+                    <h3 className={styles.comboTitle}>{pack.name}</h3>
+                    <div className={`${styles.comboCourses} d-flex flex-wrap gap-2 mb-3`}>
+                      {pack.courseList && pack.courseList.map((course, idx) => (
+                        <span key={idx} className={styles.comboTag}>{course.courseName}</span>
+                      ))}
+                    </div>
+                    <p className={styles.comboDuration}>
+                      Duration: {pack.duration > 0 ? formatDuration(pack.duration) : calculateComboDuration(pack.courseList || [])}
+                    </p>
+                    <div className={styles.comboPrice}>
+                      <span className={styles.price}>₹{pack.price}</span>
+                      {pack.discountPercentage > 0 && (
+                        <span className={styles.discount}>{pack.discountPercentage}% OFF</span>
+                      )}
+                    </div>
+                    <button className={`${styles.knowMore} btn`}>Know More</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* Learning Process */}
+      {/* Learning Process - Updated with step numbers */}
       <section className={`${styles.processSection} py-5`}>
         <div className="container">
           <h2 className={`${styles.sectionTitle} text-center mb-5`}>Here's how you will learn for Free</h2>
           <div className="row g-4 mb-5">
             <div className="col-lg-4 col-md-6">
-              <div className={`${styles.processStep} text-center h-100`}>
-                <div className={styles.stepIcon}>📚</div>
+              <div className={`${styles.processStep} text-center h-100 position-relative`}>
+                <div className={`${styles.stepNumber} position-absolute`}>1</div>
+                <div className={styles.stepIcon}>📝</div>
                 <h3>Enroll</h3>
-                <p>Enroll into your favorite courses by paying ₹499</p>
+                <p>Enroll into your favorite courses by paying ₹799</p>
               </div>
             </div>
             <div className="col-lg-4 col-md-6">
-              <div className={`${styles.processStep} text-center h-100`}>
-                <div className={styles.stepIcon}>🎓</div>
+              <div className={`${styles.processStep} text-center h-100 position-relative`}>
+                <div className={`${styles.stepNumber} position-absolute`}>2</div>
+                <div className={styles.stepIcon}>✅</div>
                 <h3>Complete Course</h3>
-                <p>With all the lectures and assignments</p>
+                <p>With all the video lectures, assignments and mini project</p>
               </div>
             </div>
             <div className="col-lg-4 col-md-12">
-              <div className={`${styles.processStep} text-center h-100`}>
-                <div className={styles.stepIcon}>💰</div>
+              <div className={`${styles.processStep} text-center h-100 position-relative`}>
+                <div className={`${styles.stepNumber} position-absolute`}>3</div>
+                <div className={styles.stepIcon}>💲</div>
                 <h3>100% Refund awarded</h3>
-                <p>Get 100% of fees back in your source bank account</p>
+                <p>Get 100% of fees back</p>
               </div>
             </div>
           </div>
@@ -408,7 +465,7 @@ const fetchCourses = async () => {
               <div className={styles.processInfo}>
                 <h3>Duration of course</h3>
                 <ul>
-                  <li>Get <strong>lifetime course access</strong>, Even after getting <strong>100% refund</strong></li>
+                  <li>Get <strong>one year course access</strong>, Even after getting <strong>100% refund</strong></li>
                   <li>For <strong>100% refund</strong> complete course within <strong>3 months</strong></li>
                 </ul>
               </div>
@@ -422,7 +479,7 @@ const fetchCourses = async () => {
         <div className="container">
           <h2 className={`${styles.sectionTitle} text-center mb-3`}>Why Choose CodeGram?</h2>
           <p className={`${styles.sectionSubtitle} text-center mb-5`}>
-            Get instant mentorship, internship opportunities and a supportive learning community.
+            Get query resolution, internship opportunities and a supportive learning community.
           </p>
           
           <div className="row g-4 mb-5">
@@ -469,7 +526,7 @@ const fetchCourses = async () => {
                     <td className={styles.checkmark}>✅</td>
                   </tr>
                   <tr>
-                    <td>Personal Mentorship</td>
+                    <td>Query Resolution</td>
                     <td className={styles.checkmark}>✅</td>
                     <td className={styles.crossmark}>❌</td>
                     <td className={styles.crossmark}>❌</td>
