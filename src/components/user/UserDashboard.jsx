@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Search, ChevronLeft, ChevronRight, Clock, Play } from 'lucide-react';
-import styles from './Dashboard.module.css';
+import styles from './UserDashboard.module.css';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('All');
@@ -34,16 +34,12 @@ const Dashboard = () => {
               Dashboard
             </div>
             <div className={styles.navItem}>
-              <span className={styles.navIcon}>👥</span>
-              Refer and Earn
+              <span className={styles.navIcon}>💻</span>
+              My Courses
             </div>
             <div className={styles.navItem}>
               <span className={styles.navIcon}>🎓</span>
               Certificate
-            </div>
-            <div className={styles.navItem}>
-              <span className={styles.navIcon}>💻</span>
-              Hackathon
             </div>
             <div className={styles.navItem}>
               <span className={styles.navIcon}>📄</span>

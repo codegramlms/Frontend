@@ -156,3 +156,20 @@
   transform: translateY(-2px);
 }
 
+.logoImage {
+  width: 80px;
+  height: 55px;
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.nameTagImage {
+  width: 200px;
+  height: 50px;
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+

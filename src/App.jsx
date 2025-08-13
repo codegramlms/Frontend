@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Routes, Route, Link, useNavigate, Navigate, useLocation } from "react-router-dom";
 import styles from "./App.module.css";
 import LandingPage from "./components/Landing/LandingPage";
-import Dashboard from "./components/user/Dashboard";
+import Dashboard from "./components/user/UserDashboard";
 import LoginModal from "./components/Landing/LoginModal";
 import SignupModal from "./components/Landing/SignupModal";
 import Promotion from "./assets/Promotion";
+import Logo from "./assets/logo.png";
+import NameTag from "./assets/nameTag.png";
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
@@ -218,8 +220,17 @@ const NavbarWithRouter = ({ setLoginStatus }) => {
                 onClick={handleDashboardNavigate}
                 style={{ cursor: "pointer" }}
               >
-                <span className={styles.logoIcon}>🎓</span>
-                <span className={styles.logoText}></span>
+                {/* <img
+                  src={Logo}
+                  alt="CodeGram Logo"
+                  className={styles.logoImage}
+                />
+
+                 <img
+                  src={NameTag}
+                  alt="CodeGram Name Tag"
+                  className={styles.nameTagImage}
+                />                       */}
               </div>
             </div>
             <div className="col-md-6">

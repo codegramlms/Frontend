@@ -1,66 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from './LandingPage.module.css';
-import LoginModal from './LoginModal';
-import SignupModal from './SignupModal';
+import { getApiWithAuth } from '../../constants/GetMethod'; 
+import { LANDING_STATS_URL, LANDING_COURSES_URL, LANDING_FAQ_URL, LANDING_COMBOPACK_URL } from '../../constants/apiConstants';
+import LandingPageImage from '../../assets/landing.png';
 
 const LandingPage = () => {
   const [activeTab, setActiveTab] = useState('All Courses');
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showSignupModal, setShowSignupModal] = useState(false);
+  const [stats, setStats] = useState({
+    courseCount: null, 
+    learnerCount: null, 
+    internshipCount: null,
+    projectsCount: null
+  });
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
+  const [courses, setCourses] = useState([]);
+  const [isLoadingCourses, setIsLoadingCourses] = useState(true);
+  const [tabs, setTabs] = useState(['All Courses']);
+  const [faqs, setFaqs] = useState([]);
+  const [isLoadingFaqs, setIsLoadingFaqs] = useState(true);
+  const [expandedFaq, setExpandedFaq] = useState(null);
+  
+  // New state for combo packs
+  const [comboPacks, setComboPacks] = useState([]);
+  const [isLoadingComboPacks, setIsLoadingComboPacks] = useState(true);
 
-  const tabs = ['All Courses', 'Design', 'Development', 'IT & Software', 'Business'];
+  // Ref for courses section
+  const coursesRef = useRef(null);
 
-  const courses = [
-    { title: 'Full Stack Web Development', icon: '🌐', category: 'Development' },
-    { title: 'UI/UX Design Mastery', icon: '🎨', category: 'Design' },
-    { title: 'Data Science & Analytics', icon: '📊', category: 'IT & Software' },
-    { title: 'Digital Marketing Pro', icon: '📱', category: 'Business' },
-    { title: 'Cloud Computing AWS', icon: '☁️', category: 'IT & Software' },
-    { title: 'Mobile App Development', icon: '📲', category: 'Development' },
-    { title: 'Cybersecurity Fundamentals', icon: '🔒', category: 'IT & Software' },
-    { title: 'Graphic Design Studio', icon: '🖼️', category: 'Design' }
-  ];
-
-  const comboPacks = [
-    {
-      title: 'Full Stack Developer Pack',
-      courses: ['HTML/CSS', 'JavaScript', 'React.js', 'Node.js', 'MongoDB', 'AWS'],
-      duration: '6 months',
-      color: 'blue'
-    },
-    {
-      title: 'Creative Designer Pack',
-      courses: ['Photoshop', 'Illustrator', 'Figma', 'UI/UX', 'Branding', 'Portfolio'],
-      duration: '4 months',
-      color: 'blue'
-    },
-    {
-      title: 'Data Scientist Pack',
-      courses: ['Python', 'SQL', 'Machine Learning', 'Tableau', 'Statistics', 'AI'],
-      duration: '8 months',
-      color: 'blue'
-    },
-    {
-      title: 'Business Growth Pack',
-      courses: ['Marketing', 'Analytics', 'SEO', 'Social Media', 'Strategy', 'Leadership'],
-      duration: '5 months',
-      color: 'blue'
-    }
-  ];
+  // Course category icons mapping
+  const categoryIcons = {
+    'Development': '🌐',
+    'Design': '🎨',
+    'IT And Software': '📊',
+    'Business': '📱',
+    'AI': '🤖',
+    'Coding': '💻',
+    'Default': '📚'
+  };
 
   const features = [
-    { icon: '💰', title: '100% Refund Guarantee', desc: 'Get full refund if not satisfied' },
-    { icon: '🎯', title: 'Personalized Mentorship', desc: '1-on-1 guidance from experts' },
+    { icon: '💲', title: '100% Refund Guarantee', desc: 'Get full refund if not satisfied' },
+    { icon: '💬', title: 'Query Resolution', desc: 'Query resolution within 7 days with text support' },
     { icon: '💼', title: 'Internship Opportunities', desc: 'Guaranteed placement assistance' },
-    { icon: '🏆', title: 'Industry Certificates', desc: 'Recognized by top companies' }
+    { icon: '🏅', title: 'Industry Certificates', desc: 'Recognized by top companies' }
   ];
 
   const testimonials = [
     {
       name: 'Sarah Johnson',
       role: 'Full Stack Developer at Google',
-      content: 'TechMaster transformed my career completely. The mentorship program and hands-on projects gave me the confidence to land my dream job.',
+      content: 'CodeGram transformed my career completely. The mentorship program and hands-on projects gave me the confidence to land my dream job.',
       rating: 5
     },
     {
@@ -77,42 +67,151 @@ const LandingPage = () => {
     }
   ];
 
-  const faqs = [
-    {
-      question: 'Why should I opt for TechMaster?',
-      answer: 'TechMaster offers industry-relevant curriculum, expert mentorship, and guaranteed internship opportunities with 100% refund guarantee.'
-    },
-    {
-      question: 'What is the validity of the courses and when can I watch them?',
-      answer: 'All courses have lifetime access. You can watch them anytime, anywhere at your own pace with mobile and desktop support.'
-    },
-    {
-      question: 'Will my course validity expire after I receive the 100% refund amount?',
-      answer: 'No, course access remains valid even after refund. We believe in our quality and want you to succeed.'
-    },
-    {
-      question: 'How will I know that 100% Refund offer has been applied?',
-      answer: 'You will receive email confirmation and see the refund status in your dashboard within 24 hours of enrollment.'
-    },
-    {
-      question: 'How will I receive my 100% Refund amount?',
-      answer: 'Refunds are processed through the original payment method within 5-7 business days of completion.'
+  // Function to scroll to courses section
+  const scrollToCourses = () => {
+    if (coursesRef.current) {
+      coursesRef.current.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
     }
-  ];
-
-  const handleSwitchToSignup = () => {
-    setShowLoginModal(false);
-    setShowSignupModal(true);
   };
 
-  const handleSwitchToLogin = () => {
-    setShowSignupModal(false);
-    setShowLoginModal(true);
+  // Function to fetch stats from API
+  const fetchStats = async () => {
+    try {
+      setIsLoadingStats(true);
+      const response = await getApiWithAuth(LANDING_STATS_URL);
+      
+      if (response.data && response.data.status === 'success') {
+        const apiStats = response.data.payload;
+        setStats({
+          courseCount: apiStats.courseCount || null,
+          learnerCount: apiStats.learnerCount || null,
+          internshipCount: apiStats.internshipCount || null,
+          projectsCount: apiStats.projectsCount || null
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+      // Keep stats as null on error - they will be handled in the render
+    } finally {
+      setIsLoadingStats(false);
+    }
   };
 
-  const closeModals = () => {
-    setShowLoginModal(false);
-    setShowSignupModal(false);
+  // Function to fetch courses from API
+  const fetchCourses = async () => {
+    try {
+      setIsLoadingCourses(true);
+      const response = await getApiWithAuth(LANDING_COURSES_URL);
+      
+      if (response.data && response.data.status === 'success') {
+        const payload = response.data.payload;
+        const coursesData = payload.courseList || [];
+        const displayCategories = payload.displayCategories || [];
+        
+        setCourses(coursesData);
+        
+        // Create tabs using the displayCategories from API response
+        setTabs(['All Courses', ...displayCategories]);
+      }
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+      setCourses([]);
+    } finally {
+      setIsLoadingCourses(false);
+    }
+  };
+
+  // Function to fetch combo packs from API
+  const fetchComboPacks = async () => {
+    try {
+      setIsLoadingComboPacks(true);
+      const response = await getApiWithAuth(LANDING_COMBOPACK_URL);
+      
+      if (response.data && response.data.status === 'success') {
+        const payload = response.data.payload;
+        const comboPacksData = payload.courseComboList || [];
+        setComboPacks(comboPacksData);
+      }
+    } catch (error) {
+      console.error('Error fetching combo packs:', error);
+      setComboPacks([]);
+    } finally {
+      setIsLoadingComboPacks(false);
+    }
+  };
+
+  // Function to fetch FAQs from API
+  const fetchFaqs = async () => {
+    try {
+      setIsLoadingFaqs(true);
+      const response = await getApiWithAuth(LANDING_FAQ_URL);
+      
+      if (response.data && response.data.status === 'success') {
+        const faqsData = response.data.payload;
+        setFaqs(faqsData);
+      }
+    } catch (error) {
+      console.error('Error fetching FAQs:', error);
+      setFaqs([]);
+    } finally {
+      setIsLoadingFaqs(false);
+    }
+  };
+
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchStats();
+    fetchCourses();
+    fetchComboPacks();
+    fetchFaqs();
+  }, []);
+
+  // Helper function to format numbers
+  const formatNumber = (num) => {
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(1) + 'M';
+    } else if (num >= 1000) {
+      return (num / 1000).toFixed(0) + 'K';
+    }
+    return num.toString();
+  };
+
+  // Helper function to format duration
+  const formatDuration = (durationInHours) => {
+    if (!durationInHours || durationInHours === 0) {
+      return 'Variable duration';
+    }
+    
+    return `${durationInHours} hour${durationInHours > 1 ? 's' : ''}`;
+  };
+
+  // Helper function to calculate total duration for combo pack
+  const calculateComboDuration = (courseList) => {
+    const totalHours = courseList.reduce((sum, course) => {
+      return sum + (course.durationInHours || 0);
+    }, 0);
+    
+    return formatDuration(totalHours);
+  };
+
+  // Filter courses based on active tab
+  const filteredCourses = courses.filter(course => {
+    if (activeTab === 'All Courses') {
+      return true;
+    }
+    return course.displayCategory === activeTab;
+  });
+
+  // Get icon for category
+  const getCategoryIcon = (category) => {
+    return categoryIcons[category] || categoryIcons['Default'];
+  };
+
+  const toggleFaq = (index) => {
+    setExpandedFaq(expandedFaq === index ? null : index);
   };
 
   return (
@@ -149,7 +248,12 @@ const LandingPage = () => {
                   <span className={styles.ratingSubtext}>Google Ratings</span>
                 </div>
                 <div className={`${styles.heroButtons} d-flex gap-3`}>
-                  <button className={`${styles.exploreCourses} btn btn-lg`}>Explore Courses</button>
+                  <button 
+                    className={`${styles.exploreCourses} btn btn-lg`}
+                    onClick={scrollToCourses}
+                  >
+                    Explore Courses
+                  </button>
                 </div>
               </div>
             </div>
@@ -164,15 +268,15 @@ const LandingPage = () => {
                     <span className={styles.cardIcon}>💡</span>
                     <span>Instant doubt Support</span>
                   </div>
-                  <div className={styles.mainImage}>
-                    <div className={styles.studentAvatar}>👨‍💻</div>
-                  </div>
-                  <div className={styles.womanImage}>
-                    <div className={styles.womanAvatar}>👩‍💼</div>
+                  <div>
+                        <img
+                        src={LandingPageImage}
+                        className={styles.mainImage}
+                        />
                   </div>
                   <div className={`${styles.reviewCard}`}>
                     <span className={styles.googleIcon}>G</span>
-                    <span>Google Reviews</span>
+                    <span> Google Reviews</span>
                     <div className={styles.reviewRating}>
                       <span>4.9/5</span>
                       <div className={styles.reviewStars}>⭐⭐⭐⭐⭐</div>
@@ -183,29 +287,45 @@ const LandingPage = () => {
             </div>
           </div>
           
-          {/* Stats Section */}
+          {/* Stats Section - Updated with API data */}
           <div className={`${styles.statSection} row g-4 py-5`}>
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className={`${styles.statCard} text-center`}>
-                <span className={styles.statNumber}>42+</span>
+                {isLoadingStats || stats.courseCount === null ? (
+                  <span className={styles.statNumber}>...</span>
+                ) : (
+                  <span className={styles.statNumber}>{stats.courseCount}+</span>
+                )}
                 <span className={styles.statLabel}>Courses</span>
               </div>
             </div>
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className={`${styles.statCard} text-center`}>
-                <span className={styles.statNumber}>90K+</span>
+                {isLoadingStats || stats.learnerCount === null ? (
+                  <span className={styles.statNumber}>...</span>
+                ) : (
+                  <span className={styles.statNumber}>{formatNumber(stats.learnerCount)}+</span>
+                )}
                 <span className={styles.statLabel}>Learners</span>
               </div>
             </div>
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className={`${styles.statCard} text-center`}>
-                <span className={styles.statNumber}>100K+</span>
-                <span className={styles.statLabel}>Doubts Solved</span>
+                {isLoadingStats || stats.internshipCount === null ? (
+                     <span className={styles.statNumber}>...</span>
+                ) : (
+                  <span className={styles.statNumber}>{formatNumber(stats.internshipCount)}+</span>
+                )}
+                <span className={styles.statLabel}>Internship Provided</span>
               </div>
             </div>
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className={`${styles.statCard} text-center`}>
-                <span className={styles.statNumber}>10K+</span>
+                {isLoadingStats || stats.projectsCount === null ? (
+                     <span className={styles.statNumber}>...</span>
+                ) : (
+                  <span className={styles.statNumber}>{formatNumber(stats.projectsCount)}+</span>
+                )}
                 <span className={styles.statLabel}>Student Projects</span>
               </div>
             </div>
@@ -214,7 +334,7 @@ const LandingPage = () => {
       </section>
 
       {/* Courses Section */}
-      <section className={`${styles.coursesSection} py-5`}>
+      <section ref={coursesRef} className={`${styles.coursesSection} py-5`}>
         <div className="container">
           <div className={`${styles.sectionHeader} text-center mb-5`}>
             <h2 className={styles.sectionTitle}>Browse our Courses</h2>
@@ -235,67 +355,107 @@ const LandingPage = () => {
             ))}
           </div>
 
-          <div className="row g-4">
-            {courses.map((course, index) => (
-              <div key={index} className="col-xl-3 col-lg-4 col-md-6 col-sm-6">
-                <div className={`${styles.courseCard} h-100 text-center`}>
-                  <div className={styles.courseIcon}>{course.icon}</div>
-                  <h3 className={styles.courseTitle}>{course.title}</h3>
-                  <span className={styles.courseCategory}>{course.category}</span>
-                </div>
+          {isLoadingCourses ? (
+            <div className="text-center py-5">
+              <div className="spinner-border" role="status">
+                <span className="visually-hidden">Loading courses...</span>
               </div>
-            ))}
-          </div>
+              <p className="mt-3">Loading courses...</p>
+            </div>
+          ) : filteredCourses.length === 0 ? (
+            <div className="text-center py-5">
+              <p>No courses found for the selected category.</p>
+            </div>
+          ) : (
+            <div className="row g-4">
+              {filteredCourses.map((course, index) => (
+                <div key={course.id || index} className="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                  <div className={`${styles.courseCard} h-100 text-center`}>
+                    <div className={styles.courseIcon}>
+                      {getCategoryIcon(course.displayCategory)}
+                    </div>
+                    <h3 className={styles.courseTitle}>{course.courseName}</h3>
+                    <span className={styles.courseCategory}>{course.displayCategory}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* Combo Packs */}
+     {/* Combo Packs - Updated with API integration */}
       <section className={`${styles.comboSection} py-5`}>
         <div className="container">
           <h2 className={`${styles.comboPackTitle} text-center mb-5`}>Interested in our Combo Packs?</h2>
-          <div className="row g-4">
-            {comboPacks.map((pack, index) => (
-              <div key={index} className="col-xl-3 col-lg-6 col-md-6">
-                <div className={`${styles.comboCard} h-100`}>
-                  <h3 className={styles.comboTitle}>{pack.title}</h3>
-                  <div className={`${styles.comboCourses} d-flex flex-wrap gap-2 mb-3`}>
-                    {pack.courses.map((course, idx) => (
-                      <span key={idx} className={styles.comboTag}>{course}</span>
-                    ))}
-                  </div>
-                  <p className={styles.comboDuration}>Duration: {pack.duration}</p>
-                  <button className={`${styles.knowMore} btn`}>Know More</button>
-                </div>
+          
+          {isLoadingComboPacks ? (
+            <div className="text-center py-5">
+              <div className="spinner-border" role="status">
+                <span className="visually-hidden">Loading combo packs...</span>
               </div>
-            ))}
-          </div>
+              <p className="mt-3">Loading combo packs...</p>
+            </div>
+          ) : comboPacks.length === 0 ? (
+            <div className="text-center py-5">
+              <p>No combo packs available at the moment.</p>
+            </div>
+          ) : (
+            <div className="row g-4">
+              {comboPacks.map((pack, index) => (
+                <div key={pack.comboId || index} className="col-xl-3 col-lg-6 col-md-6">
+                  <div className={`${styles.comboCard} h-100`}>
+                    <h3 className={styles.comboTitle}>{pack.name}</h3>
+                    <div className={`${styles.comboCourses} d-flex flex-wrap gap-2 mb-3`}>
+                      {pack.courseList && pack.courseList.map((course, idx) => (
+                        <span key={idx} className={styles.comboTag}>{course.courseName}</span>
+                      ))}
+                    </div>
+                    <p className={styles.comboDuration}>
+                      Duration: {pack.duration > 0 ? formatDuration(pack.duration) : calculateComboDuration(pack.courseList || [])}
+                    </p>
+                    <div className={styles.comboPrice}>
+                      <span className={styles.price}>₹{pack.price}</span>
+                      {pack.discountPercentage > 0 && (
+                        <span className={styles.discount}>{pack.discountPercentage}% OFF</span>
+                      )}
+                    </div>
+                    <button className={`${styles.knowMore} btn`}>Know More</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* Learning Process */}
+      {/* Learning Process - Updated with step numbers */}
       <section className={`${styles.processSection} py-5`}>
         <div className="container">
           <h2 className={`${styles.sectionTitle} text-center mb-5`}>Here's how you will learn for Free</h2>
           <div className="row g-4 mb-5">
             <div className="col-lg-4 col-md-6">
-              <div className={`${styles.processStep} text-center h-100`}>
-                <div className={styles.stepIcon}>📚</div>
+              <div className={`${styles.processStep} text-center h-100 position-relative`}>
+                <div className={`${styles.stepNumber} position-absolute`}>1</div>
+                <div className={styles.stepIcon}>📝</div>
                 <h3>Enroll</h3>
-                <p>Enroll into your favorite courses by paying ₹499</p>
+                <p>Enroll into your favorite courses by paying ₹799</p>
               </div>
             </div>
             <div className="col-lg-4 col-md-6">
-              <div className={`${styles.processStep} text-center h-100`}>
-                <div className={styles.stepIcon}>🎓</div>
+              <div className={`${styles.processStep} text-center h-100 position-relative`}>
+                <div className={`${styles.stepNumber} position-absolute`}>2</div>
+                <div className={styles.stepIcon}>✅</div>
                 <h3>Complete Course</h3>
-                <p>With all the lectures and assignments</p>
+                <p>With all the video lectures, assignments and mini project</p>
               </div>
             </div>
             <div className="col-lg-4 col-md-12">
-              <div className={`${styles.processStep} text-center h-100`}>
-                <div className={styles.stepIcon}>💰</div>
+              <div className={`${styles.processStep} text-center h-100 position-relative`}>
+                <div className={`${styles.stepNumber} position-absolute`}>3</div>
+                <div className={styles.stepIcon}>💲</div>
                 <h3>100% Refund awarded</h3>
-                <p>Get 100% of fees back in your source bank account</p>
+                <p>Get 100% of fees back</p>
               </div>
             </div>
           </div>
@@ -305,7 +465,7 @@ const LandingPage = () => {
               <div className={styles.processInfo}>
                 <h3>Duration of course</h3>
                 <ul>
-                  <li>Get <strong>lifetime course access</strong>, Even after getting <strong>100% refund</strong></li>
+                  <li>Get <strong>one year course access</strong>, Even after getting <strong>100% refund</strong></li>
                   <li>For <strong>100% refund</strong> complete course within <strong>3 months</strong></li>
                 </ul>
               </div>
@@ -317,9 +477,9 @@ const LandingPage = () => {
          {/* Why Choose Us */}
       <section className={`${styles.whyChooseSection} py-5`}>
         <div className="container">
-          <h2 className={`${styles.sectionTitle} text-center mb-3`}>Why Choose TechMaster?</h2>
+          <h2 className={`${styles.sectionTitle} text-center mb-3`}>Why Choose CodeGram?</h2>
           <p className={`${styles.sectionSubtitle} text-center mb-5`}>
-            Get instant mentorship, internship opportunities and a supportive learning community.
+            Get query resolution, internship opportunities and a supportive learning community.
           </p>
           
           <div className="row g-4 mb-5">
@@ -341,7 +501,7 @@ const LandingPage = () => {
                 <thead>
                   <tr>
                     <th>Features</th>
-                    <th>TechMaster</th>
+                    <th>CodeGram</th>
                     <th>Recorded Class Platform</th>
                     <th>Live Class Platform</th>
                   </tr>
@@ -366,13 +526,7 @@ const LandingPage = () => {
                     <td className={styles.checkmark}>✅</td>
                   </tr>
                   <tr>
-                    <td>Personal Mentorship</td>
-                    <td className={styles.checkmark}>✅</td>
-                    <td className={styles.crossmark}>❌</td>
-                    <td className={styles.crossmark}>❌</td>
-                  </tr>
-                  <tr>
-                    <td>Guaranteed Paid Internship</td>
+                    <td>Query Resolution</td>
                     <td className={styles.checkmark}>✅</td>
                     <td className={styles.crossmark}>❌</td>
                     <td className={styles.crossmark}>❌</td>
@@ -407,24 +561,48 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className={`${styles.faqSection} py-5`}>
-        <div className="container">
-          <h2 className={`${styles.sectionTitle} text-center mb-5`}>Got Questions? Check Out Our FAQs!</h2>
-          <div className="row justify-content-center">
-            <div className="col-lg-8">
-              <div className={styles.faqList}>
-                {faqs.map((faq, index) => (
-                  <div key={index} className={`${styles.faqItem} mb-3`}>
-                    <h3 className={styles.faqQuestion}>{faq.question}</h3>
-                    <p className={styles.faqAnswer}>{faq.answer}</p>
-                  </div>
-                ))}
-              </div>
+      {/* FAQ Section - Updated with API integration */}
+     <section className={`${styles.faqSection} py-5`}>
+  <div className="container">
+    <h2 className={`${styles.sectionTitle} text-center mb-5`}>Got Questions? Check Out Our FAQs!</h2>
+    <div className="row justify-content-center">
+      <div className="col-lg-8">
+        {isLoadingFaqs ? (
+          <div className="text-center py-5">
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading FAQs...</span>
             </div>
+            <p className="mt-3">Loading FAQs...</p>
           </div>
-        </div>
-      </section>
+        ) : faqs.length === 0 ? (
+          <div className="text-center py-5">
+            <p>No FAQs available at the moment.</p>
+          </div>
+        ) : (
+          <div className={styles.faqList}>
+            {faqs.map((faq, index) => (
+              <div key={faq.id || index} className={`${styles.faqItem} mb-3`}>
+                <h3 
+                  className={styles.faqQuestion}
+                  onClick={() => toggleFaq(index)}
+                  data-expanded={expandedFaq === index}
+                >
+                  {faq.question}
+                  <span className={styles.faqIcon}>
+                    {expandedFaq === index ? '-' : '+'}
+                  </span>
+                </h3>
+                {expandedFaq === index && (
+                  <p className={styles.faqAnswer}>{faq.answer}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Footer */}
       <footer className={`${styles.footer} py-5`}>
@@ -478,19 +656,6 @@ const LandingPage = () => {
           </div>
         </div>
       </footer>
-
-      {/* Modals
-      <LoginModal 
-        isOpen={showLoginModal}
-        onClose={closeModals}
-        onSwitchToSignup={handleSwitchToSignup}
-      />
-      
-      <SignupModal 
-        isOpen={showSignupModal}
-        onClose={closeModals}
-        onSwitchToLogin={handleSwitchToLogin}
-      /> */}
     </div>
   );
 };

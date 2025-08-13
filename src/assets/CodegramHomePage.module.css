@@ -7,11 +7,11 @@
 
 .refundStrip {
   position: absolute;
-  top: 50px;
+  top: 27px;
   left: -50px;
   background: linear-gradient(135deg, #fbbf24, #f59e0b);
   color: #92400e;
-  padding: 12px 60px 12px 20px;
+  padding: 12px 20px 12px 20px;
   font-size: 0.875rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -585,10 +585,10 @@
   }
 
   .refundStrip {
-    top: 40px;
-    left: -40px;
+    top: 26px;
+    left: -45px;
     font-size: 0.75rem;
-    padding: 10px 50px 10px 15px;
+    padding: 10px 15px 10px 15px;
     min-width: 180px;
     transform: rotate(-45deg);
   }
@@ -658,10 +658,10 @@
 
 @media (max-width: 576px) {
   .refundStrip {
-    top: 35px;
-    left: -35px;
+    top: 20px;
+    left: -39px;
     font-size: 0.65rem;
-    padding: 8px 40px 8px 12px;
+    padding: 8px 12px 8px 12px;
     min-width: 150px;
     transform: rotate(-45deg);
   }
@@ -697,10 +697,10 @@
 
 @media (max-width: 480px) {
   .refundStrip {
-    top: 30px;
-    left: -30px;
+    top: 17px;
+    left: -34px;
     font-size: 0.6rem;
-    padding: 6px 35px 6px 10px;
+    padding: 6px 10px 6px 10px;
     min-width: 130px;
     transform: rotate(-45deg);
   }
@@ -708,10 +708,10 @@
 
 @media (max-width: 360px) {
   .refundStrip {
-    top: 25px;
-    left: -25px;
+    top: 16px;
+    left: -31px;
     font-size: 0.55rem;
-    padding: 5px 30px 5px 8px;
+    padding: 5px 8px 5px 8px;
     min-width: 120px;
     transform: rotate(-45deg);
   }
