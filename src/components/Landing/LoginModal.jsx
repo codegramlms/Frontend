@@ -16,7 +16,6 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup }) => {
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
-
   // Reset form when modal is closed
   const resetForm = () => {
     setFormData({
@@ -58,7 +57,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup }) => {
       ...formData,
       [name]: value
     });
-
+    
     // Clear field-specific error when user starts typing
     if (formError[name]) {
       setFormError(prev => ({
@@ -163,7 +162,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup }) => {
   return (
     <div className={styles.overlay}>
       <div className={`${styles.modal} ${Object.keys(formError).length > 0 ? styles.modalWithErrors : ''}`}>
-        <button className={styles.closeButton} onClick={handleClose}>
+        <button className={styles.closeButton} onClick={handleClose} aria-label="Close modal">
           ×
         </button>
         
@@ -176,44 +175,66 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup }) => {
 
         {/* Success Message */}
         {successMessage && (
-          <div className={styles.successMessage}>{successMessage}</div>
+          <div className={styles.successMessage} role="alert">
+            <strong>✅ {successMessage}</strong>
+          </div>
         )}
 
         {/* General Error Message */}
         {formError.general && (
-          <div className={styles.errorMessage}>{formError.general}</div>
+          <div className={styles.errorMessage} role="alert">
+            <strong>❌ {formError.general}</strong>
+          </div>
         )}
 
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form onSubmit={handleSubmit} className={styles.form} noValidate>
           <div className={styles.inputGroup}>
-            <span className={styles.inputIcon}>📧</span>
+            <span className={styles.inputIcon} aria-hidden="true">📧</span>
             <input
               type="email"
               name="emailId"
-              placeholder="Email"
+              placeholder="Enter your email address"
               value={formData.emailId}
               onChange={handleChange}
               className={`${styles.input} ${formError.emailId ? styles.inputError : ''}`}
               required
+              autoComplete="email"
+              aria-label="Email address"
+              aria-describedby={formError.emailId ? "email-error" : undefined}
             />
             {formError.emailId && (
-              <div className={styles.fieldErrorMessage}>{formError.emailId}</div>
+              <div 
+                id="email-error" 
+                className={styles.fieldErrorMessage}
+                role="alert"
+              >
+                ⚠️ {formError.emailId}
+              </div>
             )}
           </div>
 
           <div className={styles.inputGroup}>
-            <span className={styles.inputIcon}>🔑</span>
+            <span className={styles.inputIcon} aria-hidden="true">🔑</span>
             <input
               type="password"
               name="password"
-              placeholder="Password"
+              placeholder="Enter your password"
               value={formData.password}
               onChange={handleChange}
               className={`${styles.input} ${formError.password ? styles.inputError : ''}`}
               required
+              autoComplete="current-password"
+              aria-label="Password"
+              aria-describedby={formError.password ? "password-error" : undefined}
             />
             {formError.password && (
-              <div className={styles.fieldErrorMessage}>{formError.password}</div>
+              <div 
+                id="password-error" 
+                className={styles.fieldErrorMessage}
+                role="alert"
+              >
+                ⚠️ {formError.password}
+              </div>
             )}
           </div>
 
@@ -221,23 +242,31 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup }) => {
             type="submit" 
             disabled={loadingSubmit}
             className={styles.submitButton}
+            aria-label={loadingSubmit ? "Logging in, please wait" : "Login to your account"}
           >
-            {loadingSubmit ? "Logging in..." : "Login"}
+            {loadingSubmit ? "Signing You In..." : "🚀 Login"}
           </button>
         </form>
 
         <div className={styles.footer}>
           <span className={styles.switchText}>
-            New User?
+            New to CodeGram?
             <button 
+              type="button"
               className={styles.switchButton}
               onClick={onSwitchToSignup}
+              aria-label="Switch to registration form"
             >
-              Register here
+              Create Account
             </button>
           </span>
-          <button className={styles.forgotPassword}>
-            Forgot Password
+          
+          <button 
+            type="button"
+            className={styles.forgotPassword}
+            aria-label="Reset your password"
+          >
+            🔐 Forgot Password?
           </button>
         </div>
       </div>
